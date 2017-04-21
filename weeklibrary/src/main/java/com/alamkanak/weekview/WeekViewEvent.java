@@ -218,4 +218,16 @@ public class WeekViewEvent {
 
         return events;
     }
+
+    public void updateStartTime(Calendar startTime) {
+
+
+
+
+
+
+
+
+
+    }
 }

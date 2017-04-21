@@ -6,12 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.alamkanak.weekview.view.DragScaleView;
+import com.alamkanak.weekview.utils.EventTimeUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -23,12 +27,18 @@ import java.util.Locale;
  * Created by Raquib-ul-Alam Kanak on 1/3/2014.
  * Website: http://alamkanak.github.io
  */
-public abstract class BaseActivity extends AppCompatActivity implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener {
+public abstract class BaseActivity extends AppCompatActivity
+        implements WeekView.EventClickListener,
+        MonthLoader.MonthChangeListener, WeekView.EventLongPressListener,
+        WeekView.EmptyViewLongPressListener, View.OnClickListener,
+        DragScaleView.OnDragupListener {
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
     private int mWeekViewType = TYPE_THREE_DAY_VIEW;
-    private WeekView mWeekView;
+    protected WeekView mWeekView;
+    protected DragScaleView drag;
+    private TextView text;
 
 
     @Override
@@ -36,12 +46,17 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
+        drag = (DragScaleView) findViewById(R.id.drag);
+        drag.setDragType(DragScaleView.DRAG_VERTICAL);
+        drag.setDragUpListener(this);
+        text = (TextView) findViewById(R.id.text);
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);
 
         // Show a toast message about the touched event.
         mWeekView.setOnEventClickListener(this);
 
+        mWeekView.setOnClickListener(this);
         // The week view has infinite scrolling horizontally. We have to provide the events of a
         // month every time the month changes on the week view.
         mWeekView.setMonthChangeListener(this);
@@ -59,6 +74,11 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
 
 
     @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -68,7 +88,7 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         setupDateTimeInterpreter(id == R.id.action_week_view);
-        switch (id){
+        switch (id) {
             case R.id.action_today:
                 mWeekView.goToToday();
                 return true;
@@ -116,6 +136,7 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
     /**
      * Set up a date time interpreter which will show short date values when in week view and long
      * date values otherwise.
+     *
      * @param shortDate True if the date values should be short.
      */
     private void setupDateTimeInterpreter(final boolean shortDate) {
@@ -142,18 +163,31 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
     }
 
     protected String getEventTitle(Calendar time) {
-        return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
+        return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH) + 1, time.get(Calendar.DAY_OF_MONTH));
     }
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
+
+
         Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
     }
 
+
+    /**
+     * 位置转化成时间， 时间转化成位置
+     * <p>
+     * //     * @param event:     event clicked.
+     * //     * @param eventRect: view containing the clicked event.
+     */
+
     @Override
-    public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
+    public void onEventLongPress(int pos) {
+        WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
+        drag.show(eventRect.event, eventRect.rectF, pos);
+//        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
     }
+
 
     @Override
     public void onEmptyViewLongPress(Calendar time) {
@@ -163,4 +197,31 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
     public WeekView getWeekView() {
         return mWeekView;
     }
+
+
+    @Override
+    public void onDragUpListener(View drag, int pos, int startSum, int endSum) {
+        WeekView.EventRect rect = mWeekView.getEventRect(pos);
+        WeekViewEvent event = rect.originalEvent;
+        EventTimeUtils.news().init(mWeekView.getHourHeight());
+        int start = event.getStartTime().get(Calendar.HOUR_OF_DAY) * 60
+                + event.getStartTime().get(Calendar.MINUTE) + EventTimeUtils.news().heightToMinute(startSum);
+        int end = event.getStartTime().get(Calendar.HOUR_OF_DAY) * 60
+                + event.getStartTime().get(Calendar.MINUTE) +
+                EventTimeUtils.news().heightToMinute(endSum);
+        int hour = start / 60;
+        int minute = start % 60;
+        Calendar startTime = (Calendar) event.getStartTime().clone();
+        startTime.set(Calendar.HOUR_OF_DAY, hour);
+        startTime.set(Calendar.MINUTE, minute);
+        event.setStartTime(startTime);
+
+        Calendar endTime = (Calendar) event.getEndTime().clone();
+        endTime.set(Calendar.HOUR_OF_DAY, end / 60);
+        endTime.set(Calendar.MINUTE, end % 60);
+        event.setEndTime(endTime);
+        event.setName(getEventTitle(startTime));
+        mWeekView.notifyDatasetChanged();
+    }
+
 }
