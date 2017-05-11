@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,8 +15,8 @@ import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
-import com.alamkanak.weekview.view.DragScaleView;
 import com.alamkanak.weekview.utils.EventTimeUtils;
+import com.alamkanak.weekview.view.DragScaleView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,6 +40,7 @@ public abstract class BaseActivity extends AppCompatActivity
     protected WeekView mWeekView;
     protected DragScaleView drag;
     private TextView text;
+    protected TextView time;
 
 
     @Override
@@ -46,12 +48,16 @@ public abstract class BaseActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
+
+
         drag = (DragScaleView) findViewById(R.id.drag);
         drag.setDragType(DragScaleView.DRAG_VERTICAL);
         drag.setDragUpListener(this);
         text = (TextView) findViewById(R.id.text);
+        time = (TextView) findViewById(R.id.time);
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);
+        EventTimeUtils.news().init(mWeekView.getHourHeight());
 
         // Show a toast message about the touched event.
         mWeekView.setOnEventClickListener(this);
@@ -182,7 +188,7 @@ public abstract class BaseActivity extends AppCompatActivity
      */
 
     @Override
-    public void onEventLongPress(int pos) {
+    public void onEventLongPress(MotionEvent e, int pos) {
         WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
         drag.show(eventRect.event, eventRect.rectF, pos);
 //        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
@@ -201,27 +207,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
     @Override
     public void onDragUpListener(View drag, int pos, int startSum, int endSum) {
-        WeekView.EventRect rect = mWeekView.getEventRect(pos);
-        WeekViewEvent event = rect.originalEvent;
-        EventTimeUtils.news().init(mWeekView.getHourHeight());
-        int start = event.getStartTime().get(Calendar.HOUR_OF_DAY) * 60
-                + event.getStartTime().get(Calendar.MINUTE) + EventTimeUtils.news().heightToMinute(startSum);
-        int end = event.getStartTime().get(Calendar.HOUR_OF_DAY) * 60
-                + event.getStartTime().get(Calendar.MINUTE) +
-                EventTimeUtils.news().heightToMinute(endSum);
-        int hour = start / 60;
-        int minute = start % 60;
-        Calendar startTime = (Calendar) event.getStartTime().clone();
-        startTime.set(Calendar.HOUR_OF_DAY, hour);
-        startTime.set(Calendar.MINUTE, minute);
-        event.setStartTime(startTime);
 
-        Calendar endTime = (Calendar) event.getEndTime().clone();
-        endTime.set(Calendar.HOUR_OF_DAY, end / 60);
-        endTime.set(Calendar.MINUTE, end % 60);
-        event.setEndTime(endTime);
-        event.setName(getEventTitle(startTime));
-        mWeekView.notifyDatasetChanged();
     }
 
 }

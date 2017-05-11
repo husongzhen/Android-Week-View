@@ -18,7 +18,7 @@
         app:headerColumnTextColor="@color/toolbar_text"
         app:headerRowBackgroundColor="#ffffffff"
         app:headerRowPadding="12dp"
-        app:hourHeight="46dp"
+        app:hourHeight="56dp"
         app:noOfVisibleDays="3"
         app:textSize="12sp"
         app:todayBackgroundColor="#1848adff"
@@ -33,6 +33,12 @@
         android:visibility="gone"
         app:eventTextColor="@android:color/white"
         app:textSize="12sp" />
+
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
 </RelativeLayout>

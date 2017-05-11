@@ -5,6 +5,7 @@ import android.widget.Toast;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.alamkanak.weekview.sample.apiclient.Event;
 import com.alamkanak.weekview.sample.apiclient.MyJsonService;
+import com.alamkanak.weekview.view.DragScaleView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -73,5 +74,10 @@ public class AsynchronousActivity extends BaseActivity implements Callback<List<
     public void failure(RetrofitError error) {
         error.printStackTrace();
         Toast.makeText(this, R.string.async_error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDragingsListener(DragScaleView dragScaleView, int pos, int startSum, int endSum) {
+
     }
 }

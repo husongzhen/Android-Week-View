@@ -5,10 +5,7 @@ import android.util.SparseArray;
 import com.alamkanak.weekview.WeekViewEvent;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-
-import static android.R.attr.key;
 
 /**
  * 作者：husongzhen on 17/4/21 14:58

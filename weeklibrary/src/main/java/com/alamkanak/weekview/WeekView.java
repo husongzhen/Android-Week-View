@@ -11,20 +11,16 @@ import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.text.Layout;
-import android.text.SpannableStringBuilder;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.text.style.StyleSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
@@ -34,7 +30,6 @@ import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.OverScroller;
-import android.widget.Toast;
 
 import com.alamkanak.weekview.utils.EventTextUtils;
 
@@ -289,7 +284,7 @@ public class WeekView extends View {
                 for (int i = 0; i < size; i++) {
                     EventRect event = reversedEventRects.get(i);
                     if (event.rectF != null && e.getX() > event.rectF.left && e.getX() < event.rectF.right && e.getY() > event.rectF.top && e.getY() < event.rectF.bottom) {
-                        mEventLongPressListener.onEventLongPress(i);
+                        mEventLongPressListener.onEventLongPress(e, i);
                         performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                         return;
                     }
@@ -516,8 +511,6 @@ public class WeekView extends View {
         super.onDraw(canvas);
 
 
-
-
         // Draw the header row.
         drawHeaderRowAndEvents(canvas);
 
@@ -678,7 +671,7 @@ public class WeekView extends View {
             if (mEventRects == null || mRefreshEvents ||
                     (dayNumber == leftDaysWithGaps + 1
                             && mFetchedPeriod != (int) mWeekViewLoader.toWeekViewPeriodIndex(day)
-                            &&Math.abs(mFetchedPeriod - mWeekViewLoader.toWeekViewPeriodIndex(day)) > 0.5)) {
+                            && Math.abs(mFetchedPeriod - mWeekViewLoader.toWeekViewPeriodIndex(day)) > 0.5)) {
                 getMoreEvents(day);
                 mRefreshEvents = false;
             }
@@ -968,7 +961,6 @@ public class WeekView extends View {
         }
 
     }
-
 
 
     /**
@@ -2081,11 +2073,12 @@ public class WeekView extends View {
     public interface EventLongPressListener {
         /**
          * Similar to {@link com.alamkanak.weekview.WeekView.EventClickListener} but with a long press.
-         *
-         * @param event:     event clicked.
+         *  @param event:     event clicked.
          * @param eventRect: view containing the clicked event.
+         * @param e
          */
-        void onEventLongPress(int pos);
+        void onEventLongPress(MotionEvent e, int pos);
+
 //        void onEventLongPress(WeekViewEvent event, RectF eventRect);
 
     }

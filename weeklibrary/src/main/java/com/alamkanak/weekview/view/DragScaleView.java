@@ -263,11 +263,14 @@ public class DragScaleView extends View implements View.OnTouchListener {
                         top(v, dy);
                         break;
                 }
+
                 if (dragDirection != CENTER) {
                     v.layout(oriLeft, oriTop, oriRight, oriBottom);
                 }
                 lastX = (int) event.getRawX();
                 lastY = (int) event.getRawY();
+                dragUpListener.onDragingsListener(this, pos, startSum, endSum);
+
                 break;
             case MotionEvent.ACTION_UP:
                 dragDirection = 0;
@@ -279,11 +282,6 @@ public class DragScaleView extends View implements View.OnTouchListener {
 
                 int endY = (int) event.getRawY();
                 int endX = (int) event.getRawX();
-
-
-
-
-
                 dragUpListener.onDragUpListener(this, pos, startSum, endSum);
 
                 break;
@@ -433,5 +431,7 @@ public class DragScaleView extends View implements View.OnTouchListener {
 
     public interface OnDragupListener {
         void onDragUpListener(View drag, int pos, int dirX, int dirY);
+
+        void onDragingsListener(DragScaleView dragScaleView, int pos, int startSum, int endSum);
     }
 }

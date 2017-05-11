@@ -1,5 +1,6 @@
 package com.alamkanak.weekview.sample;
 
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -7,6 +8,7 @@ import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.alamkanak.weekview.sample.apiclient.model.WeekEvents;
 import com.alamkanak.weekview.utils.EventTimeUtils;
+import com.alamkanak.weekview.view.DragScaleView;
 
 import java.util.Calendar;
 import java.util.List;
@@ -29,7 +31,7 @@ public class BasicActivity extends BaseActivity {
         if (mevents != null && mevents.size() > 0) {
             return mevents;
         }
-        Calendar startTime =  Calendar.getInstance();
+        Calendar startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 3);
         startTime.set(Calendar.MINUTE, 0);
         startTime.set(Calendar.MONTH, newMonth - 1);
@@ -171,7 +173,7 @@ public class BasicActivity extends BaseActivity {
 
 
     @Override
-    public void onEventLongPress(int pos) {
+    public void onEventLongPress(MotionEvent e, int pos) {
         WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
         drag.show(eventRect.event, eventRect.rectF, pos);
 //        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
@@ -181,25 +183,27 @@ public class BasicActivity extends BaseActivity {
     public void onDragUpListener(View drag, int pos, int startSum, int endSum) {
         WeekView.EventRect rect = mWeekView.getEventRect(pos);
         WeekViewEvent event = rect.originalEvent;
-        EventTimeUtils.news().init(mWeekView.getHourHeight());
-        int start = event.getStartTime().get(Calendar.HOUR_OF_DAY) * 60
-                + event.getStartTime().get(Calendar.MINUTE) + EventTimeUtils.news().heightToMinute(startSum);
-        int end = event.getEndTime().get(Calendar.HOUR_OF_DAY) * 60
-                + event.getEndTime().get(Calendar.MINUTE) +
-                EventTimeUtils.news().heightToMinute(endSum);
-        int hour = start / 60;
-        int minute = start % 60;
-        Calendar startTime = (Calendar) event.getStartTime().clone();
-        startTime.set(Calendar.HOUR_OF_DAY, hour);
-        startTime.set(Calendar.MINUTE, minute);
-        event.setStartTime(startTime);
-
-        Calendar endTime = (Calendar) event.getEndTime().clone();
-        endTime.set(Calendar.HOUR_OF_DAY, end / 60);
-        endTime.set(Calendar.MINUTE, end % 60);
-        event.setEndTime(endTime);
-        event.setName(getEventTitle(startTime));
+        event.setStartTime(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum));
+        event.setEndTime(EventTimeUtils.news().getCurrectTime(event.getEndTime(), endSum));
+        event.setName(getEventTitle(event.getStartTime()));
         mWeekView.notifyDatasetChanged();
+    }
+
+    @Override
+    public void onDragingsListener(DragScaleView dragScaleView, int pos, int startSum, int endSum) {
+        WeekView.EventRect rect = mWeekView.getEventRect(pos);
+        WeekViewEvent event = rect.originalEvent;
+        event.setName(getEventTitle(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum)));
+
+//        handler.sendMessage(handler.obtainMessage(1, start));
+
+
+//        WeekView.EventRect rect = mWeekView.getEventRect(pos);
+//        WeekViewEvent event = rect.originalEvent;
+//        EventTimeUtils.news().init(mWeekView.getHourHeight());
+//        event.setStartTime(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum));
+//        event.setEndTime(EventTimeUtils.news().getCurrectTime(event.getEndTime(), endSum));
+//        mWeekView.notifyDatasetChanged();
     }
 
 
