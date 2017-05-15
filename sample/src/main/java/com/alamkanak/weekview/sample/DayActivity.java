@@ -18,7 +18,7 @@ import java.util.List;
  * Created by Raquib-ul-Alam Kanak on 1/3/2014.
  * Website: http://alamkanak.github.io
  */
-public class BasicActivity extends BaseActivity {
+public class DayActivity extends BaseActivity {
 
 
     private WeekEvents events = new WeekEvents();
@@ -222,16 +222,6 @@ public class BasicActivity extends BaseActivity {
         WeekView.EventRect rect = mWeekView.getEventRect(pos);
         WeekViewEvent event = rect.originalEvent;
         event.setName(getEventTitle(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum)));
-
-//        handler.sendMessage(handler.obtainMessage(1, start));
-
-
-//        WeekView.EventRect rect = mWeekView.getEventRect(pos);
-//        WeekViewEvent event = rect.originalEvent;
-//        EventTimeUtils.news().init(mWeekView.getHourHeight());
-//        event.setStartTime(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum));
-//        event.setEndTime(EventTimeUtils.news().getCurrectTime(event.getEndTime(), endSum));
-//        mWeekView.notifyDatasetChanged();
     }
 
 

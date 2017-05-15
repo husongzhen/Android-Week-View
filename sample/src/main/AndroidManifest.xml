@@ -24,6 +24,9 @@
             android:name=".AsynchronousActivity"
             android:label="@string/title_activity_asynchronous"></activity>
         <activity
+            android:name=".DayActivity"
+            android:label="@string/title_activity_asynchronous"></activity>
+        <activity
             android:name=".DragActivity"
             android:label="@string/title_activity_asynchronous"></activity>
     </application>
