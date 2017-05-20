@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.dayBasic).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, BasicActivity.class);
+                Intent intent = new Intent(MainActivity.this, BasicTimeActivity.class);
                 startActivity(intent);
             }
         });

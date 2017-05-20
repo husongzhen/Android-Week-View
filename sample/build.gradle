@@ -17,6 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    sourceSets.main {
+        //让AS识别libs下的.so第三方包
+        jniLibs.srcDirs = ['libs']
+    }
 }
 
 dependencies {

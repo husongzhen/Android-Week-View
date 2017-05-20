@@ -1,5 +1,6 @@
 package com.alamkanak.weekview.sample;
 
+import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -18,8 +19,14 @@ import java.util.List;
  * Created by Raquib-ul-Alam Kanak on 1/3/2014.
  * Website: http://alamkanak.github.io
  */
-public class BasicActivity extends BaseActivity {
+public class BasicTimeActivity extends BaseActivity {
 
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mWeekView.setTimeSet();
+    }
 
     private WeekEvents events = new WeekEvents();
 
@@ -204,11 +211,13 @@ public class BasicActivity extends BaseActivity {
     public void onEventLongPress(MotionEvent e, int pos) {
         WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
         drag.show(eventRect.event, eventRect.rectF, pos);
+        mWeekView.setTouchAble(false);
 //        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDragUpListener(View drag, int pos, int startSum, int endSum) {
+        mWeekView.setTouchAble(true);
         WeekView.EventRect rect = mWeekView.getEventRect(pos);
         WeekViewEvent event = rect.originalEvent;
         event.setStartTime(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum));

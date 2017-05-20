@@ -77,15 +77,6 @@ public abstract class BaseActivity extends AppCompatActivity
         // the week view. This is optional.
         setupDateTimeInterpreter(false);
 
-        if (mWeekViewType != TYPE_DAY_VIEW) {
-            mWeekViewType = TYPE_DAY_VIEW;
-            mWeekView.setNumberOfVisibleDays(1);
-
-            // Lets change some dimensions to best fit the view.
-            mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
-            mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-            mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-        }
     }
 
 
@@ -180,6 +171,18 @@ public abstract class BaseActivity extends AppCompatActivity
 
     protected String getEventTitle(Calendar time) {
         return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH) + 1, time.get(Calendar.DAY_OF_MONTH));
+    }
+
+    protected String getEventTitle(Calendar start, Calendar end) {
+        int startTime = start.get(Calendar.HOUR_OF_DAY) * 60 + start.get(Calendar.MINUTE);
+        int endTime = end.get(Calendar.HOUR_OF_DAY) * 60 + end.get(Calendar.MINUTE);
+        int during = endTime - startTime;
+        return String.format("%02d:%02d - %02d:%02d \n" + "%02d小时%02d分",
+                start.get(Calendar.HOUR_OF_DAY),
+                start.get(Calendar.MINUTE),
+                end.get(Calendar.HOUR_OF_DAY),
+                end.get(Calendar.MINUTE),
+                during / 60, during % 60);
     }
 
     @Override
