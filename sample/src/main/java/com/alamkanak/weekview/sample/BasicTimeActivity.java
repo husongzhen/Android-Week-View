@@ -19,20 +19,21 @@ import java.util.List;
  * Created by Raquib-ul-Alam Kanak on 1/3/2014.
  * Website: http://alamkanak.github.io
  */
-public class BasicTimeActivity extends BaseActivity {
+public class BasicTimeActivity extends BaseActivity implements WeekView.EventEditListener {
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mWeekView.setTimeSet();
+        mWeekView.setEditListener(this);
     }
 
     private WeekEvents events = new WeekEvents();
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
-        Toast.makeText(this, "onMonthChange , newYear" + newYear + ", newMonth = " + newMonth, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "onMonthChange , newYear" + newYear + ", newMonth = " + newMonth, Toast.LENGTH_SHORT).show();
         // Populate the week view with some events.
         List<WeekViewEvent> mevents = events.getEvents(newYear, newMonth);
         if (mevents != null && mevents.size() > 0) {
@@ -209,29 +210,39 @@ public class BasicTimeActivity extends BaseActivity {
 
     @Override
     public void onEventLongPress(MotionEvent e, int pos) {
-        WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
-        drag.show(eventRect.event, eventRect.rectF, pos);
-        mWeekView.setTouchAble(false);
+//        WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
+//        drag.show(eventRect.event, eventRect.rectF, pos);
+//        mWeekView.setTouchAble(false);
 //        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDragUpListener(View drag, int pos, int startSum, int endSum) {
-        mWeekView.setTouchAble(true);
-        WeekView.EventRect rect = mWeekView.getEventRect(pos);
-        WeekViewEvent event = rect.originalEvent;
-        event.setStartTime(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum));
-        event.setEndTime(EventTimeUtils.news().getCurrectTime(event.getEndTime(), endSum));
-        event.setName(getEventTitle(event.getStartTime()));
-        mWeekView.notifyDatasetChanged();
+//        mWeekView.setTouchAble(true);
+//        WeekView.EventRect rect = mWeekView.getEventRect(pos);
+//        WeekViewEvent event = rect.originalEvent;
+//        event.setStartTime(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum));
+//        event.setEndTime(EventTimeUtils.news().getCurrectTime(event.getEndTime(), endSum));
+//        event.setName(getEventTitle(event.getStartTime()));
+//        mWeekView.notifyDatasetChanged();
     }
 
     @Override
     public void onDragingsListener(DragScaleView dragScaleView, int pos, int startSum, int endSum) {
-        WeekView.EventRect rect = mWeekView.getEventRect(pos);
-        WeekViewEvent event = rect.originalEvent;
-        event.setName(getEventTitle(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum)));
+//        WeekView.EventRect rect = mWeekView.getEventRect(pos);
+//        WeekViewEvent event = rect.originalEvent;
+//        event.setName(getEventTitle(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum)));
     }
 
 
+    @Override
+    public void onUpListener(int pos, float topSum, float bottomSum) {
+        WeekView.EventRect rect = mWeekView.getEventRect(pos);
+        WeekViewEvent event = rect.originalEvent;
+        event.setStartTime(EventTimeUtils.news().getCurrectTime(event.getStartTime(), topSum));
+        event.setEndTime(EventTimeUtils.news().getCurrectTime(event.getEndTime(), bottomSum));
+        event.setName(getEventTitle(event.getStartTime(), event.getEndTime()));
+        mWeekView.notifyDatasetChanged();
+
+    }
 }
