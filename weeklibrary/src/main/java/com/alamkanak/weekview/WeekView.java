@@ -2,14 +2,17 @@ package com.alamkanak.weekview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
@@ -33,6 +36,7 @@ import android.widget.OverScroller;
 
 import com.alamkanak.weekview.utils.EventTextUtils;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,12 +44,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.MemoryHandler;
 
-import static android.R.attr.bottom;
-import static android.R.attr.left;
-import static android.R.attr.top;
-import static android.R.attr.x;
 import static android.media.CamcorderProfile.get;
+import static com.alamkanak.weekview.R.string.hour;
 import static com.alamkanak.weekview.WeekViewUtil.isSameDay;
 import static com.alamkanak.weekview.WeekViewUtil.today;
 
@@ -59,6 +61,10 @@ public class WeekView extends View {
     private Paint nowLine;
     private boolean containsAllDayEvent;
     private boolean touchAble = true;
+    private boolean showTimeArea = true;
+    private int eventLeftColorWidth = 4;
+    private int touchEditCicleR = 15;
+    private int editCircleIconId = 0;
 
     public void setTouchAble(boolean b) {
         this.touchAble = b;
@@ -145,7 +151,7 @@ public class WeekView extends View {
     private int mTodayHeaderTextColor = Color.rgb(39, 137, 228);
     private int mEventTextSize = 12;
     private int mEventTextColor = Color.BLACK;
-    private int mEventPadding = 8;
+    private int mEventPadding = 28;
     private int mHeaderColumnBackgroundColor = Color.WHITE;
     private boolean mIsFirstDraw = true;
     private boolean mAreDimensionsInvalid = true;
@@ -183,13 +189,16 @@ public class WeekView extends View {
     private static final int TIME_EVENTS_TYPE = 111;
     private static final int EDIT_STATUE = 113;
     private static final int DIMISS_STATUE = 114;
+    private static final int ALWAYS_SHOW_STATUE = 114;
     private int flingType;
     private int editType;
     private ADayItem touchAllDayItem;
     public int editPos;
     private PointF editPoint = new PointF(0f, 0f);
     private int timeType = TIME_EVENTS_TYPE;
-    private RectF topEditRect, bottomEditRect;
+    //    private RectF topEditRect, bottomEditRect;
+    private RectF topEditRect = new RectF();
+    private RectF bottomEditRect = new RectF();
     private float topSum, bottomSum;
     private EventEditListener editListener;
 
@@ -299,8 +308,6 @@ public class WeekView extends View {
 
                     break;
                 case VERTICAL:
-
-
                     if (editType == EDIT_STATUE) {
                         return true;
                     }
@@ -354,12 +361,10 @@ public class WeekView extends View {
                 for (int i = 0; i < size; i++) {
                     EventRect event = mEventRects.get(i);
                     if (event.rectF != null && e.getX() > event.rectF.left && e.getX() < event.rectF.right && e.getY() > event.rectF.top && e.getY() < event.rectF.bottom) {
-                        editPoint.set(0f, 0f);
-                        editType = EDIT_STATUE;
-                        editPos = i;
+                        setEditEvent(i);
                         mEventLongPressListener.onEventLongPress(e, i);
                         performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                        ViewCompat.postInvalidateOnAnimation(WeekView.this);
+
                         return;
                     }
                 }
@@ -376,6 +381,13 @@ public class WeekView extends View {
         }
     };
 
+    public void setEditEvent(int i) {
+        editPoint.set(0f, 0f);
+        editType = EDIT_STATUE;
+        editPos = i;
+        ViewCompat.postInvalidateOnAnimation(WeekView.this);
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -387,7 +399,7 @@ public class WeekView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (editType == EDIT_STATUE) {
+                if (editType == EDIT_TYPE) {
                     if (topEditRect.contains(event.getX(), event.getY())) {
                         flingType = EDIT_TOP;
                     } else if (bottomEditRect.contains(event.getX(), event.getY())) {
@@ -409,6 +421,9 @@ public class WeekView extends View {
                 break;
 
             case MotionEvent.ACTION_UP:
+                if (isTimeSet()) {
+                    editType = EDIT_STATUE;
+                }
                 if (editType == EDIT_STATUE) {
                     editListener.onUpListener(editPos, topSum, bottomSum);
                     editPoint.set(0f, 0f);
@@ -486,6 +501,8 @@ public class WeekView extends View {
             mEventTextSize = a.getDimensionPixelSize(R.styleable.WeekView_eventTextSize, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, mEventTextSize, context.getResources().getDisplayMetrics()));
             mEventTextColor = a.getColor(R.styleable.WeekView_eventTextColor, mEventTextColor);
             mEventPadding = a.getDimensionPixelSize(R.styleable.WeekView_eventPadding, mEventPadding);
+            touchEditCicleR = a.getDimensionPixelSize(R.styleable.WeekView_touchEditCicleR, touchEditCicleR);
+            eventLeftColorWidth = a.getDimensionPixelSize(R.styleable.WeekView_eventLeftColorWidth, eventLeftColorWidth);
             mHeaderColumnBackgroundColor = a.getColor(R.styleable.WeekView_headerColumnBackground, mHeaderColumnBackgroundColor);
             mDayNameLength = a.getInteger(R.styleable.WeekView_dayNameLength, mDayNameLength);
             mOverlappingEventGap = a.getDimensionPixelSize(R.styleable.WeekView_overlappingEventGap, mOverlappingEventGap);
@@ -499,6 +516,7 @@ public class WeekView extends View {
             mVerticalFlingEnabled = a.getBoolean(R.styleable.WeekView_verticalFlingEnabled, mVerticalFlingEnabled);
             mAllDayEventHeight = a.getDimensionPixelSize(R.styleable.WeekView_allDayEventHeight, mAllDayEventHeight);
             mScrollDuration = a.getInt(R.styleable.WeekView_scrollDuration, mScrollDuration);
+            editCircleIconId = a.getResourceId(R.styleable.WeekView_editCircleIconId, editCircleIconId);
         } finally {
             a.recycle();
         }
@@ -642,20 +660,25 @@ public class WeekView extends View {
                 throw new IllegalStateException("A DateTimeInterpreter must not return null time");
             mTimeTextWidth = Math.max(mTimeTextWidth, mTimeTextPaint.measureText(time));
         }
+
+        mTimeTextWidth += mHeaderColumnPadding;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-
         // Draw the header row.
         drawHeaderRowAndEvents(canvas);
         // Draw the time column and all the axes/separators.
         drawTimeColumnAndAxes(canvas);
-
-
     }
+
+
+    public void showTimeArea() {
+        showTimeArea = true;
+        postInvalidate();
+    }
+
 
     private void calculateHeaderHeight() {
         //Make sure the header is the right size (depends on AllDay events)
@@ -702,6 +725,7 @@ public class WeekView extends View {
 
             // Draw the text if its y position is not outside of the visible area. The pivot point of the text is the point at the bottom-right corner.
             String time = getDateTimeInterpreter().interpretTime(i);
+//            String time = i + getResources().getString(hour);
             if (time == null)
                 throw new IllegalStateException("A DateTimeInterpreter must not return null time");
             if (top < getHeight())
@@ -837,7 +861,6 @@ public class WeekView extends View {
                 getMoreEvents(day);
                 mRefreshEvents = false;
             }
-
             // Draw background color for each day.
             float start = (startPixel < mHeaderColumnWidth ? mHeaderColumnWidth : startPixel);
             if (mDayColumnWidth + startPixel - start > 0) {
@@ -904,12 +927,20 @@ public class WeekView extends View {
             startPixel += mDayColumnWidth + mColumnGap;
         }
 
+        scrollToTimeLIne();
+    }
 
+    private void scrollToTimeLIne() {
+        if (showTimeArea) {
+            float top = mHourHeight * 24 * mEventRects.get(editPos).top / 1440 + mHeaderHeight + getHeaderTop();
+            mCurrentOrigin.y = mHourHeight - top;
+            invalidate();
+            showTimeArea = false;
+        }
     }
 
     private void drawEditView(Canvas canvas) {
-        if (editType == EDIT_STATUE) {
-            mEventBackgroundPaint.setColor(Color.RED);
+        if (editType == EDIT_STATUE || isTimeSet()) {
             EventRect event = mEventRects.get(editPos);
             RectF rectF = event.rectF;
             if (rectF == null) {
@@ -933,34 +964,42 @@ public class WeekView extends View {
                     break;
             }
             top = event.rectF.top + topSum;
-            // Calculate bottom.
             bottom = event.rectF.bottom + bottomSum;
+            if (bottom - top <= mHourHeight) {
+                switch (flingType) {
+                    case EDIT_TOP:
+                        topSum = bottom - mHourHeight - event.rectF.top;
+                        break;
 
-            if (top <= getHourTop()) {
-                topSum = getHourTop() - event.rectF.top;
-                if (flingType == EDIT_TOP){
+                    case EDIT_BOTTOM:
+                        bottomSum = top + mHourHeight - event.rectF.bottom;
+                        break;
+                }
+            }
+            if (top <= getHourTop() + getCurrectOriginY()) {
+                topSum = getHourTop() + getCurrectOriginY() - event.rectF.top;
+                if (flingType == EDIT_TOP) {
                     bottomSum = 0;
-                }else{
+                } else {
                     bottomSum = topSum;
                 }
-                top = event.rectF.top + topSum;
-                // Calculate bottom.
-                bottom = event.rectF.bottom + bottomSum;
+
             }
 
-            if (bottom >= getHeight()) {
-                bottomSum = getHeight() - event.rectF.bottom;
-                if (flingType == EDIT_BOTTOM){
+            if (bottom > mHourHeight * 24 + getHourTop() + getCurrectOriginY()) {
+                bottomSum = mHourHeight * 24 + getHourTop() + getCurrectOriginY() - mHourHeight / 60 - event.rectF.bottom;
+                if (flingType == EDIT_BOTTOM) {
                     topSum = 0;
-                }else{
+                } else {
                     topSum = bottomSum;
                 }
 
-                top = event.rectF.top + topSum;
-                // Calculate bottom.
-                bottom = event.rectF.bottom + bottomSum;
             }
 
+
+            top = event.rectF.top + topSum;
+            // Calculate bottom.
+            bottom = event.rectF.bottom + bottomSum;
 
             // Calculate left and right.
             float left = event.rectF.left;
@@ -972,20 +1011,46 @@ public class WeekView extends View {
                     right > mHeaderColumnWidth &&
                     bottom > getHourTop()) {
                 event.rectF = new RectF(left, top, right, bottom);
+                mEventBackgroundPaint.setColor(event.event.getColor() == 0 ? mDefaultEventColor : event.event.getColor());
+                canvas.drawRect(left, top, left + eventLeftColorWidth, bottom, mEventBackgroundPaint);
+                mEventBackgroundPaint.setAlpha(80);
                 canvas.drawRoundRect(event.rectF, mEventCornerRadius, mEventCornerRadius, mEventBackgroundPaint);
                 drawEventTitle(event.event, event.rectF, canvas, top, left);
             }
-            mEventBackgroundPaint.setColor(Color.BLUE);
-            float r = 20;
-            float topX = left + r * 2;
-            float topY = top;
-            float bottomX = right - r * 2;
-            float bottomY = bottom;
-            topEditRect = new RectF(topX - r * 2, topY - r * 2, topX + r * 2, topY + r * 2);
-            bottomEditRect = new RectF(bottomX - r * 2, bottomY - r * 2, bottomX + r * 2, bottomY + r * 2);
-            canvas.drawCircle(topX, topY, r, mEventBackgroundPaint);
-            canvas.drawCircle(bottomX, bottomY, r, mEventBackgroundPaint);
+            editListener.onDragingListener(editPos, topSum, bottomSum);
+            mEventBackgroundPaint.setAlpha(225);
+            drawEditSizeCircle(canvas, top, bottom, left, right);
         }
+    }
+
+    private void drawEditSizeCircle(Canvas canvas, float top, float bottom, float left, float right) {
+        float topX = right - touchEditCicleR * 6;
+        float topY = top;
+        float bottomX = left + touchEditCicleR * 6;
+        float bottomY = bottom;
+        topEditRect = new RectF(topX - touchEditCicleR * 2, topY - touchEditCicleR * 2, topX + touchEditCicleR * 2, topY + touchEditCicleR * 2);
+        bottomEditRect = new RectF(bottomX - touchEditCicleR * 2, bottomY - touchEditCicleR * 2, bottomX + touchEditCicleR * 2, bottomY + touchEditCicleR * 2);
+
+
+//        InputStream is = getResources().openRawResource(editCircleIconId);
+//        BitmapDrawable bmpDraw = new BitmapDrawable(is);
+//        Bitmap bmp = bmpDraw.getBitmap();
+//        float w = bmp.getWidth();
+//        float scale = 2 * touchEditCicleR / w;
+//        Matrix matrix = new Matrix();
+//        matrix.setScale(scale, scale);
+//        bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(),
+//                bmp.getHeight(), matrix, true);
+//        canvas.drawBitmap(bmp, topX + touchEditCicleR, topY - touchEditCicleR, mEventBackgroundPaint);
+//        canvas.drawBitmap(bmp, bottomX - touchEditCicleR * 2, bottomY - touchEditCicleR, mEventBackgroundPaint);
+
+        canvas.drawCircle(topX, topY, touchEditCicleR, mEventBackgroundPaint);
+        canvas.drawCircle(bottomX, bottomY, touchEditCicleR, mEventBackgroundPaint);
+        mEventBackgroundPaint.setAntiAlias(true);
+        mEventBackgroundPaint.setColor(Color.WHITE);
+        int smallR = (int) (touchEditCicleR * 0.6);
+        canvas.drawCircle(topX, topY, smallR, mEventBackgroundPaint);
+        canvas.drawCircle(bottomX, bottomY, smallR, mEventBackgroundPaint);
     }
 
     private void drawTopHeaderLine(Canvas canvas) {
@@ -1023,7 +1088,8 @@ public class WeekView extends View {
             float startY = getHourTop() + getCurrectOriginY();
             Calendar now = Calendar.getInstance();
             float beforeNow = (now.get(Calendar.HOUR_OF_DAY) + now.get(Calendar.MINUTE) / 60.0f) * mHourHeight;
-            canvas.drawLine(start, startY + beforeNow, startPixel + mDayColumnWidth, startY + beforeNow, mNowLinePaint);
+            canvas.drawLine(start + nowLineCircleR, startY + beforeNow, startPixel + mDayColumnWidth, startY + beforeNow, mNowLinePaint);
+            mNowLinePaint.setAntiAlias(true);
             canvas.drawCircle(start + nowLineCircleR, startY + beforeNow, nowLineCircleR, mNowLinePaint);
         }
     }
@@ -1085,8 +1151,10 @@ public class WeekView extends View {
                 if (isSameDay(mEventRects.get(i).event.getStartTime(), date)
                         && !mEventRects.get(i).event.isAllDay()) {
                     drawDay(startFromPixel, canvas, i);
-
-
+                    if (mEventRects.get(i).event.isEditAble()) {
+                        mEventRects.get(i).event.setEditAble(false);
+                        setEditEvent(i);
+                    }
                 }
             }
         }
@@ -1117,6 +1185,9 @@ public class WeekView extends View {
                 ) {
             mEventRects.get(i).rectF = new RectF(left, top, right, bottom);
             mEventBackgroundPaint.setColor(mEventRects.get(i).event.getColor() == 0 ? mDefaultEventColor : mEventRects.get(i).event.getColor());
+            if (isTimeSet() && editPos == i) {
+                return;
+            }
             canvas.drawRoundRect(mEventRects.get(i).rectF, mEventCornerRadius, mEventCornerRadius, mEventBackgroundPaint);
             drawEventTitle(mEventRects.get(i).event, mEventRects.get(i).rectF, canvas, top, left);
 
@@ -1294,6 +1365,12 @@ public class WeekView extends View {
             // Draw text.
             canvas.save();
             canvas.translate(originalLeft + mEventPadding, originalTop + mEventPadding);
+            textLayout.draw(canvas);
+            canvas.restore();
+        } else {
+            originalTop = originalTop - textLayout.getHeight();
+            canvas.save();
+            canvas.translate(originalLeft + mEventPadding, originalTop - mEventPadding);
             textLayout.draw(canvas);
             canvas.restore();
         }
@@ -2481,6 +2558,8 @@ public class WeekView extends View {
 
     public interface EventEditListener {
         void onUpListener(int pos, float topSum, float bottomSum);
+
+        void onDragingListener(int editPos, float topSum, float bottomSum);
     }
 
 

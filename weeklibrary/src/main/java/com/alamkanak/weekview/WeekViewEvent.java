@@ -3,6 +3,7 @@ package com.alamkanak.weekview;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import static com.alamkanak.weekview.WeekViewUtil.*;
 
@@ -18,6 +19,15 @@ public class WeekViewEvent {
     private String mLocation;
     private int mColor;
     private boolean mAllDay;
+    private boolean isEditAble = false;
+
+    public void setEditAble(boolean editAble) {
+        isEditAble = editAble;
+    }
+
+    public boolean isEditAble() {
+        return isEditAble;
+    }
 
     public WeekViewEvent(){
 

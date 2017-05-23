@@ -47,9 +47,6 @@ public abstract class BaseActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-
-
-
         drag = (DragScaleView) findViewById(R.id.drag);
         drag.setDragType(DragScaleView.DRAG_VERTICAL);
         drag.setDragUpListener(this);
@@ -76,7 +73,6 @@ public abstract class BaseActivity extends AppCompatActivity
         // Set up a date time interpreter to interpret how the date and time will be formatted in
         // the week view. This is optional.
         setupDateTimeInterpreter(false);
-
     }
 
 
@@ -164,7 +160,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
             @Override
             public String interpretTime(int hour) {
-                return hour > 11 ? (hour - 12) + " PM" : (hour == 0 ? "12 AM" : hour + " AM");
+                return hour + getResources().getString(R.string.hour);
             }
         });
     }

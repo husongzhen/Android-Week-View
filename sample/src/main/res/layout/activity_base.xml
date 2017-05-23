@@ -20,6 +20,7 @@
         app:nowLineColor="@color/event_color_01"
         app:hourHeight="56dp"
         app:noOfVisibleDays="3"
+        app:editCircleIconId="@drawable/edit_circle_icon"
         app:textSize="12sp"
         app:todayBackgroundColor="#1848adff"
         app:todayHeaderTextColor="@color/accent" />

@@ -30,6 +30,8 @@
         <attr name="nowLineCircleR" format="dimension"/>
         <attr name="eventTextColor" format="color"/>
         <attr name="eventPadding" format="dimension"/>
+        <attr name="touchEditCicleR" format="dimension"/>
+        <attr name="eventLeftColorWidth" format="dimension"/>
         <attr name="headerColumnBackground" format="color"/>
         <attr name="dayNameLength" format="enum">
             <enum name="length_short" value="1"/>
@@ -52,5 +54,6 @@
         <attr name="verticalFlingEnabled" format="boolean"/>
         <attr name="allDayEventHeight" format="dimension"/>
         <attr name="scrollDuration" format="integer"/>
+        <attr name="editCircleIconId" format="reference"/>
     </declare-styleable>
 </resources>
