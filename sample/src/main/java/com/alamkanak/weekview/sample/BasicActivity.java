@@ -21,6 +21,10 @@ import java.util.List;
 public class BasicActivity extends BaseActivity {
 
 
+
+
+
+
     private WeekEvents events = new WeekEvents();
 
     @Override

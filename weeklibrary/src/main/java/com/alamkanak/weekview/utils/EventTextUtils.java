@@ -32,4 +32,23 @@ public class EventTextUtils {
     }
 
 
+
+    @NonNull
+    public static final String getEventLineTitle(WeekViewEvent event) {
+        // Prepare the name of the event.
+        SpannableStringBuilder bob = new SpannableStringBuilder();
+        if (event.getName() != null) {
+            bob.append(event.getName().replace("\n", ""));
+            bob.setSpan(new StyleSpan(Typeface.BOLD), 0, bob.length(), 0);
+            bob.append(' ');
+        }
+
+        // Prepare the location of the event.
+        if (event.getLocation() != null) {
+            bob.append(event.getLocation());
+        }
+        return bob.toString();
+    }
+
+
 }
