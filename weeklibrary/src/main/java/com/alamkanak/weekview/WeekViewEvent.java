@@ -20,6 +20,24 @@ public class WeekViewEvent {
     private int mColor;
     private boolean mAllDay;
     private boolean isEditAble = false;
+    private boolean isFinish = false;
+    private boolean isCreate = false;
+
+    public boolean isCreate() {
+        return isCreate;
+    }
+
+    public void setCreate(boolean create) {
+        isCreate = create;
+    }
+
+    public boolean isFinish() {
+        return isFinish;
+    }
+
+    public void setFinish(boolean finish) {
+        isFinish = finish;
+    }
 
     public void setEditAble(boolean editAble) {
         isEditAble = editAble;

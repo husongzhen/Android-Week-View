@@ -76,8 +76,4 @@ public class AsynchronousActivity extends BaseActivity implements Callback<List<
         Toast.makeText(this, R.string.async_error, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onDragingsListener(DragScaleView dragScaleView, int pos, int startSum, int endSum) {
-
-    }
 }

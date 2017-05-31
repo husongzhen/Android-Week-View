@@ -10,7 +10,7 @@
         android:id="@+id/weekView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:dayBackgroundColor="#05000000"
+        app:dayBackgroundColor="#ffffffff"
         app:eventTextColor="@android:color/black"
         app:headerColumnBackground="#ffffffff"
         app:headerColumnPadding="1dp"
@@ -20,8 +20,9 @@
         app:nowLineColor="@color/event_color_01"
         app:hourHeight="56dp"
         app:noOfVisibleDays="3"
-        app:editCircleIconId="@drawable/edit_circle_icon"
+        app:mCreateEventColor="@color/accent"
         app:textSize="12sp"
+        app:eventFinishTextColor="#A3A3A3"
         app:todayBackgroundColor="#1848adff"
         app:todayHeaderTextColor="@color/accent" />
 

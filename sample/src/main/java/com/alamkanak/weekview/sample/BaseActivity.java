@@ -67,6 +67,7 @@ public abstract class BaseActivity extends AppCompatActivity
         // Set long press listener for empty view
         mWeekView.setEmptyViewLongPressListener(this);
 
+
         // Set up a date time interpreter to interpret how the date and time will be formatted in
         // the week view. This is optional.
         setupDateTimeInterpreter(false);
@@ -180,8 +181,6 @@ public abstract class BaseActivity extends AppCompatActivity
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-
-
         Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
     }
 
@@ -206,7 +205,6 @@ public abstract class BaseActivity extends AppCompatActivity
     public WeekView getWeekView() {
         return mWeekView;
     }
-
 
 
 }

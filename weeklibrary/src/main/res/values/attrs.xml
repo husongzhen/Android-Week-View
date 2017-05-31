@@ -15,6 +15,7 @@
         <attr name="maxHourHeight" format="dimension"/>
         <attr name="textSize" format="dimension"/>
         <attr name="eventTextSize" format="dimension"/>
+        <attr name="createEventSize" format="dimension"/>
         <attr name="headerColumnPadding" format="dimension"/>
         <attr name="headerRowPadding" format="dimension"/>
         <attr name="columnGap" format="dimension"/>
@@ -29,7 +30,10 @@
         <attr name="hourSeparatorHeight" format="dimension"/>
         <attr name="nowLineCircleR" format="dimension"/>
         <attr name="eventTextColor" format="color"/>
+        <attr name="mCreateEventColor" format="color"/>
+        <attr name="eventFinishTextColor" format="color"/>
         <attr name="eventPadding" format="dimension"/>
+        <attr name="allDayEventItemPadding" format="dimension"/>
         <attr name="touchEditCicleR" format="dimension"/>
         <attr name="eventLeftColorWidth" format="dimension"/>
         <attr name="headerColumnBackground" format="color"/>
