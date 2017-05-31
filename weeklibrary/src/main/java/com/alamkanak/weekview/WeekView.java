@@ -11,6 +11,7 @@ import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewCompat;
@@ -29,7 +30,9 @@ import android.view.ScaleGestureDetector;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.OverScroller;
+import android.widget.Toast;
 
 import com.alamkanak.weekview.utils.EventTextUtils;
 
@@ -41,6 +44,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import static android.R.attr.bottom;
+import static android.R.attr.minHeight;
+import static android.R.attr.top;
 import static com.alamkanak.weekview.WeekViewUtil.isSameDay;
 import static com.alamkanak.weekview.WeekViewUtil.today;
 
@@ -186,7 +192,7 @@ public class WeekView extends View {
     private static final int EDIT_STATUE = 113;
     private static final int SHOW_STATUE = 114;
     private static final int SPEED_TOP_STATUE = 114;
-    private static final int SPEED_NULL_STATUE = 114;
+    private static final int SPEED_NULL_STATUE = 116;
     private static final int SPEED_BOTTOM_STATUE = 115;
     private int speedType;
     private int flingType;
@@ -200,26 +206,11 @@ public class WeekView extends View {
     private RectF bottomEditRect = new RectF();
     private float topSum, bottomSum;
     private EventEditListener editListener;
-    int speed = 2;
+    int speed = 10;
 
     public void setEditListener(EventEditListener editListener) {
         this.editListener = editListener;
     }
-
-
-//    private Handler handler = new Handler();
-//    private Runnable ScrollRunnable = new Runnable() {
-//        @Override
-//        public void run() {
-//            if (speedType == SPEED_TOP_STATUE) {
-//                mCurrentOrigin.y += speed;
-//                handler.postDelayed(this, 1000);
-//            } else {
-//                Thread.currentThread().interrupt();
-//            }
-//        }
-//
-//    };
 
     public void setTimeSet() {
         this.timeType = TIME_SET_TYPE;
@@ -284,7 +275,17 @@ public class WeekView extends View {
                         touchAllDayItem.getOriginPoint().y -= distanceY;
                     } else {
                         if (viewStatue == EDIT_STATUE && flingType != EDIT_OUT_VIEW_TYPE) {
-                            editPoint.y -= distanceY;
+                            if (flingType != EDIT_OUT_VIEW_TYPE) {
+                                editPoint.y -= distanceY;
+//                                if (speedType == SPEED_TOP_STATUE){
+//                                    if (mScroller.isFinished()){
+//                                        final ViewConfiguration configuration = ViewConfiguration.get(mContext);
+//                                       int  mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
+//                                        mScroller.fling((int) mCurrentOrigin.x, (int) getCurrectOriginY(), 0, (int) mMinimumVelocity, Integer.MIN_VALUE, Integer.MAX_VALUE, (int) -(mHourHeight * 24 + getHourTop() - getHeight()), 0);
+//                                    }
+//                                }
+                            }
+
                         } else {
                             mCurrentOrigin.y -= distanceY;
                         }
@@ -326,6 +327,8 @@ public class WeekView extends View {
                     if (viewStatue == EDIT_STATUE) {
                         if (flingType == EDIT_OUT_VIEW_TYPE) {
                             mScroller.fling((int) mCurrentOrigin.x, (int) getCurrectOriginY(), 0, (int) velocityY, Integer.MIN_VALUE, Integer.MAX_VALUE, (int) -(mHourHeight * 24 + getHourTop() - getHeight()), 0);
+                        } else {
+
                         }
                         return true;
                     }
@@ -451,6 +454,17 @@ public class WeekView extends View {
                     bottomSum = 0;
                 }
                 break;
+
+
+            case MotionEvent.ACTION_MOVE:
+                if (speedType == SPEED_TOP_STATUE) {
+
+
+                } else if (speedType == SPEED_BOTTOM_STATUE) {
+//                    mCurrentOrigin.y -= speed;
+//                    editPoint.y += speed;
+                }
+                break;
         }
 
 
@@ -466,6 +480,41 @@ public class WeekView extends View {
         }
 
         return val;
+    }
+
+    @Override
+    public void computeScroll() {
+        super.computeScroll();
+
+        if (mScroller.isFinished()) {
+            if (mCurrentFlingDirection != Direction.NONE) {
+                // Snap to day after fling is finished.
+                goToNearestOrigin();
+            }
+        } else {
+            if (mCurrentFlingDirection != Direction.NONE && forceFinishScroll()) {
+                goToNearestOrigin();
+            } else if (mScroller.computeScrollOffset()) {
+                if (viewStatue != EDIT_STATUE) {
+                    if (flingType == ALLDAY_TYPE) {
+                        touchAllDayItem.getOriginPoint().y = mScroller.getCurrY();
+                        touchAllDayItem.getOriginPoint().x = mScroller.getCurrX();
+                    } else {
+                        mCurrentOrigin.y = mScroller.getCurrY();
+                        mCurrentOrigin.x = mScroller.getCurrX();
+                    }
+                    ViewCompat.postInvalidateOnAnimation(this);
+                } else {
+                    if (speedType == SPEED_TOP_STATUE) {
+                        mCurrentOrigin.y += mScroller.getCurrY();
+                        editPoint.y -= mScroller.getCurrY();
+                    } else if (speedType == SPEED_BOTTOM_STATUE) {
+                        mCurrentOrigin.y -= mScroller.getCurrY();
+                        editPoint.y += mScroller.getCurrY();
+                    }
+                }
+            }
+        }
     }
 
     private boolean isTimeSet() {
@@ -985,16 +1034,9 @@ public class WeekView extends View {
                     break;
             }
 
+
             top = event.rectF.top + topSum;
             bottom = event.rectF.bottom + bottomSum;
-
-
-//            if (event.rectF.top < mHourHeight) {
-//                speedType = SPEED_TOP_STATUE;
-//            }else{
-//                speedType = SPEED_NULL_STATUE;
-//            }
-////
 
 
             float minHeight = mHourHeight * 0.25f;
@@ -1031,6 +1073,18 @@ public class WeekView extends View {
                 }
 
             }
+
+
+            top = event.rectF.top + topSum;
+            bottom = event.rectF.bottom + bottomSum;
+
+//            if (top < mHourHeight && mCurrentOrigin.y != 0) {
+//                speedType = SPEED_TOP_STATUE;
+//            } else if (bottom > getHeight() - mHourHeight && mCurrentOrigin.y != getHeight() - mHourHeight * 24 - getHourTop()) {
+//                speedType = SPEED_BOTTOM_STATUE;
+//            } else {
+//                speedType = SPEED_NULL_STATUE;
+//            }
 
 
             // Calculate left and right.
@@ -1260,7 +1314,7 @@ public class WeekView extends View {
 
     private float allDayHeight = 100;
     private float allDayTopSum = 0;
-    AllDayMap dayMap = new AllDayMap();
+    private AllDayMap dayMap = new AllDayMap();
 
     /**
      * Draw all the Allday-events of a particular day.
@@ -2441,34 +2495,6 @@ public class WeekView extends View {
         mCurrentScrollDirection = mCurrentFlingDirection = Direction.NONE;
     }
 
-
-    @Override
-    public void computeScroll() {
-        super.computeScroll();
-
-        if (mScroller.isFinished()) {
-            if (mCurrentFlingDirection != Direction.NONE) {
-                // Snap to day after fling is finished.
-                goToNearestOrigin();
-            }
-        } else {
-            if (mCurrentFlingDirection != Direction.NONE && forceFinishScroll()) {
-                goToNearestOrigin();
-            } else if (mScroller.computeScrollOffset()) {
-
-                if (flingType == ALLDAY_TYPE) {
-                    touchAllDayItem.getOriginPoint().y = mScroller.getCurrY();
-                    touchAllDayItem.getOriginPoint().x = mScroller.getCurrX();
-                } else {
-                    mCurrentOrigin.y = mScroller.getCurrY();
-                    mCurrentOrigin.x = mScroller.getCurrX();
-                }
-
-
-                ViewCompat.postInvalidateOnAnimation(this);
-            }
-        }
-    }
 
     /**
      * Check if scrolling should be stopped.

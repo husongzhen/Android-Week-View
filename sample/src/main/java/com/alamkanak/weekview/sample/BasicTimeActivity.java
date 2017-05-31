@@ -48,14 +48,14 @@ public class BasicTimeActivity extends BaseActivity implements WeekView.EventEdi
             return mevents;
         }
         Calendar startTime = Calendar.getInstance();
-        startTime.set(Calendar.HOUR_OF_DAY, 11);
+        startTime.set(Calendar.HOUR_OF_DAY, 2);
         startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.MONTH, newMonth - 1);
-        startTime.set(Calendar.YEAR, newYear);
+//        startTime.set(Calendar.MONTH, newMonth - 1);
+//        startTime.set(Calendar.YEAR, newYear);
         Calendar endTime = (Calendar) startTime.clone();
-//        endTime.add(Calendar.HOUR, 1);
-        endTime.set(Calendar.MONTH, newMonth - 1);
-        endTime.set(Calendar.MINUTE, 10);
+        endTime.add(Calendar.HOUR, 2);
+//        endTime.set(Calendar.MONTH, newMonth - 1);
+//        endTime.set(Calendar.MINUTE, 10);
         WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime, endTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setEditAble(true);
