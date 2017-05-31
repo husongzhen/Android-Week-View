@@ -1,5 +1,7 @@
 package com.alamkanak.weekview.sample;
 
+import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -13,14 +15,23 @@ import com.alamkanak.weekview.view.DragScaleView;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.alamkanak.weekview.utils.EventTimeUtils.news;
+
 /**
  * A basic example of how to use week view library.
  * Created by Raquib-ul-Alam Kanak on 1/3/2014.
  * Website: http://alamkanak.github.io
  */
-public class BasicActivity extends BaseActivity {
+public class BasicActivity extends BaseActivity implements WeekView.EventEditListener {
 
 
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mWeekView.setEditListener(this);
+    }
 
 
 
@@ -43,7 +54,7 @@ public class BasicActivity extends BaseActivity {
         Calendar endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR, 1);
         endTime.set(Calendar.MONTH, newMonth - 1);
-        WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime, endTime), startTime, endTime);
+        WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_01));
         events.addEvent(newYear, newMonth, event);
 
@@ -56,7 +67,7 @@ public class BasicActivity extends BaseActivity {
         endTime.set(Calendar.HOUR_OF_DAY, 4);
         endTime.set(Calendar.MINUTE, 30);
         endTime.set(Calendar.MONTH, newMonth - 1);
-        event = new WeekViewEvent(10, getEventTitle(startTime, endTime), startTime, endTime);
+        event = new WeekViewEvent(10, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_02));
         events.addEvent(newYear, newMonth, event);
 
@@ -68,7 +79,7 @@ public class BasicActivity extends BaseActivity {
         endTime = (Calendar) startTime.clone();
         endTime.set(Calendar.HOUR_OF_DAY, 5);
         endTime.set(Calendar.MINUTE, 0);
-        event = new WeekViewEvent(10, getEventTitle(startTime, endTime), startTime, endTime);
+        event = new WeekViewEvent(10, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_03));
         events.addEvent(newYear, newMonth, event);
 
@@ -80,7 +91,7 @@ public class BasicActivity extends BaseActivity {
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR_OF_DAY, 2);
         endTime.set(Calendar.MONTH, newMonth - 1);
-        event = new WeekViewEvent(2, getEventTitle(startTime, endTime), startTime, endTime);
+        event = new WeekViewEvent(2, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_02));
         events.addEvent(newYear, newMonth, event);
 
@@ -93,7 +104,7 @@ public class BasicActivity extends BaseActivity {
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR_OF_DAY, 3);
         endTime.set(Calendar.MONTH, newMonth - 1);
-        event = new WeekViewEvent(3, getEventTitle(startTime, endTime), startTime, endTime);
+        event = new WeekViewEvent(3, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_03));
         events.addEvent(newYear, newMonth, event);
 
@@ -105,7 +116,7 @@ public class BasicActivity extends BaseActivity {
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR_OF_DAY, 3);
-        event = new WeekViewEvent(4, getEventTitle(startTime, endTime), startTime, endTime);
+        event = new WeekViewEvent(4, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_04));
         events.addEvent(newYear, newMonth, event);
 
@@ -117,7 +128,7 @@ public class BasicActivity extends BaseActivity {
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR_OF_DAY, 3);
-        event = new WeekViewEvent(5, getEventTitle(startTime, endTime), startTime, endTime);
+        event = new WeekViewEvent(5, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_01));
         events.addEvent(newYear, newMonth, event);
 
@@ -129,7 +140,7 @@ public class BasicActivity extends BaseActivity {
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR_OF_DAY, 3);
-        event = new WeekViewEvent(5, getEventTitle(startTime, endTime), startTime, endTime);
+        event = new WeekViewEvent(5, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_02));
         events.addEvent(newYear, newMonth, event);
 
@@ -141,7 +152,7 @@ public class BasicActivity extends BaseActivity {
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR_OF_DAY, 23);
-        event = new WeekViewEvent(7, getEventTitle(startTime, endTime), null, startTime, endTime, true);
+        event = new WeekViewEvent(7, getEventTitle(startTime), null, startTime, endTime, true);
         event.setColor(getResources().getColor(R.color.event_color_04));
         events.addEvent(newYear, newMonth, event);
 
@@ -155,7 +166,7 @@ public class BasicActivity extends BaseActivity {
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR_OF_DAY, 23);
         endTime.set(Calendar.MINUTE, 2);
-        event = new WeekViewEvent(12, getEventTitle(startTime, endTime), null, startTime, endTime, true);
+        event = new WeekViewEvent(12, getEventTitle(startTime), null, startTime, endTime, true);
         event.setColor(getResources().getColor(R.color.event_color_03));
         events.addEvent(newYear, newMonth, event);
 
@@ -168,7 +179,7 @@ public class BasicActivity extends BaseActivity {
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR_OF_DAY, 23);
         endTime.set(Calendar.MINUTE, 2);
-        event = new WeekViewEvent(11, getEventTitle(startTime, endTime), null, startTime, endTime, true);
+        event = new WeekViewEvent(11, getEventTitle(startTime), null, startTime, endTime, true);
         event.setColor(getResources().getColor(R.color.event_color_01));
         events.addEvent(newYear, newMonth, event);
 
@@ -182,7 +193,7 @@ public class BasicActivity extends BaseActivity {
         endTime = (Calendar) startTime.clone();
         endTime.set(Calendar.DAY_OF_MONTH, 10);
         endTime.set(Calendar.HOUR_OF_DAY, 23);
-        event = new WeekViewEvent(8, getEventTitle(startTime, endTime), null, startTime, endTime, true);
+        event = new WeekViewEvent(8, getEventTitle(startTime), null, startTime, endTime, true);
         event.setColor(getResources().getColor(R.color.event_color_03));
         events.addEvent(newYear, newMonth, event);
 
@@ -197,7 +208,7 @@ public class BasicActivity extends BaseActivity {
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();
         endTime.set(Calendar.DAY_OF_MONTH, 11);
-        event = new WeekViewEvent(8, getEventTitle(startTime, endTime), null, startTime, endTime, true);
+        event = new WeekViewEvent(8, getEventTitle(startTime), null, startTime, endTime, true);
         event.setColor(getResources().getColor(R.color.event_color_01));
         events.addEvent(newYear, newMonth, event);
         return events.getEvents(newYear, newMonth);
@@ -207,26 +218,28 @@ public class BasicActivity extends BaseActivity {
     @Override
     public void onEventLongPress(MotionEvent e, int pos) {
         WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
-        drag.show(eventRect.event, eventRect.rectF, pos);
-//        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Long pressed event: " + eventRect.event.getName(), Toast.LENGTH_SHORT).show();
     }
 
+
+
     @Override
-    public void onDragUpListener(View drag, int pos, int startSum, int endSum) {
+    public void onUpListener(int pos, float topSum, float bottomSum) {
         WeekView.EventRect rect = mWeekView.getEventRect(pos);
         WeekViewEvent event = rect.originalEvent;
-        event.setStartTime(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum));
-        event.setEndTime(EventTimeUtils.news().getCurrectTime(event.getEndTime(), endSum));
-        event.setName(getEventTitle(event.getStartTime()));
+        event.setStartTime(news().getCurrectTime(event.getStartTime(), topSum));
+        event.setEndTime(news().getCurrectTime(event.getEndTime(), bottomSum));
+        event.setName(getEventTitle(event.getStartTime(), event.getEndTime()));
         mWeekView.notifyDatasetChanged();
+
     }
 
     @Override
-    public void onDragingsListener(DragScaleView dragScaleView, int pos, int startSum, int endSum) {
+    public void onDragingListener(int pos, float topSum, float bottomSum) {
         WeekView.EventRect rect = mWeekView.getEventRect(pos);
         WeekViewEvent event = rect.originalEvent;
-        event.setName(getEventTitle(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum)));
+        Calendar start = news().getCurrectTime(event.getStartTime(), topSum);
+        Calendar end = news().getCurrectTime(event.getEndTime(), topSum);
+        event.setName(getEventTitle(start, end));
     }
-
-
 }

@@ -22,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import static com.alamkanak.weekview.sample.R.id.drag;
+
 /**
  * This is a base activity which contains week view and all the codes necessary to initialize the
  * week view.
@@ -31,14 +33,12 @@ import java.util.Locale;
 public abstract class BaseActivity extends AppCompatActivity
         implements WeekView.EventClickListener,
         MonthLoader.MonthChangeListener, WeekView.EventLongPressListener,
-        WeekView.EmptyViewLongPressListener, View.OnClickListener,
-        DragScaleView.OnDragupListener {
+        WeekView.EmptyViewLongPressListener, View.OnClickListener {
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
     private int mWeekViewType = TYPE_THREE_DAY_VIEW;
     protected WeekView mWeekView;
-    protected DragScaleView drag;
     private TextView text;
     protected TextView time;
 
@@ -47,9 +47,6 @@ public abstract class BaseActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-        drag = (DragScaleView) findViewById(R.id.drag);
-        drag.setDragType(DragScaleView.DRAG_VERTICAL);
-        drag.setDragUpListener(this);
         text = (TextView) findViewById(R.id.text);
         time = (TextView) findViewById(R.id.time);
         // Get a reference for the week view in the layout.
@@ -198,9 +195,6 @@ public abstract class BaseActivity extends AppCompatActivity
 
     @Override
     public void onEventLongPress(MotionEvent e, int pos) {
-        WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
-        drag.show(eventRect.event, eventRect.rectF, pos);
-//        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -214,9 +208,5 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void onDragUpListener(View drag, int pos, int startSum, int endSum) {
-
-    }
 
 }

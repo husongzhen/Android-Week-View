@@ -203,26 +203,10 @@ public class DayActivity extends BaseActivity {
     @Override
     public void onEventLongPress(MotionEvent e, int pos) {
         WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
-        drag.show(eventRect.event, eventRect.rectF, pos);
+//        drag.show(eventRect.event, eventRect.rectF, pos);
 //        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onDragUpListener(View drag, int pos, int startSum, int endSum) {
-        WeekView.EventRect rect = mWeekView.getEventRect(pos);
-        WeekViewEvent event = rect.originalEvent;
-        event.setStartTime(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum));
-        event.setEndTime(EventTimeUtils.news().getCurrectTime(event.getEndTime(), endSum));
-        event.setName(getEventTitle(event.getStartTime()));
-        mWeekView.notifyDatasetChanged();
-    }
-
-    @Override
-    public void onDragingsListener(DragScaleView dragScaleView, int pos, int startSum, int endSum) {
-        WeekView.EventRect rect = mWeekView.getEventRect(pos);
-        WeekViewEvent event = rect.originalEvent;
-        event.setName(getEventTitle(EventTimeUtils.news().getCurrectTime(event.getStartTime(), startSum)));
-    }
 
 
 }

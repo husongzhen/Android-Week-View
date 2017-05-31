@@ -206,7 +206,6 @@ public class WeekView extends View {
     private RectF bottomEditRect = new RectF();
     private float topSum, bottomSum;
     private EventEditListener editListener;
-    int speed = 10;
 
     public void setEditListener(EventEditListener editListener) {
         this.editListener = editListener;
@@ -277,13 +276,6 @@ public class WeekView extends View {
                         if (viewStatue == EDIT_STATUE && flingType != EDIT_OUT_VIEW_TYPE) {
                             if (flingType != EDIT_OUT_VIEW_TYPE) {
                                 editPoint.y -= distanceY;
-//                                if (speedType == SPEED_TOP_STATUE){
-//                                    if (mScroller.isFinished()){
-//                                        final ViewConfiguration configuration = ViewConfiguration.get(mContext);
-//                                       int  mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-//                                        mScroller.fling((int) mCurrentOrigin.x, (int) getCurrectOriginY(), 0, (int) mMinimumVelocity, Integer.MIN_VALUE, Integer.MAX_VALUE, (int) -(mHourHeight * 24 + getHourTop() - getHeight()), 0);
-//                                    }
-//                                }
                             }
 
                         } else {
@@ -298,9 +290,6 @@ public class WeekView extends View {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//            if (flingType == ALLDAY_TYPE) {
-//                return true;
-//            }
             if (mIsZooming)
                 return true;
 
@@ -434,7 +423,7 @@ public class WeekView extends View {
                         flingType = EDIT_TYPE;
                     } else {
                         flingType = EDIT_OUT_VIEW_TYPE;
-//                        viewStatue = SHOW_STATUE;
+                        viewStatue = SHOW_STATUE;
                         ViewCompat.postInvalidateOnAnimation(WeekView.this);
                     }
                 } else {
@@ -458,8 +447,6 @@ public class WeekView extends View {
 
             case MotionEvent.ACTION_MOVE:
                 if (speedType == SPEED_TOP_STATUE) {
-
-
                 } else if (speedType == SPEED_BOTTOM_STATUE) {
 //                    mCurrentOrigin.y -= speed;
 //                    editPoint.y += speed;
