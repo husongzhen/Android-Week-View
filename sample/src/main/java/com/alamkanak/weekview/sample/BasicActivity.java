@@ -1,11 +1,13 @@
 package com.alamkanak.weekview.sample;
 
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.alamkanak.weekview.sample.apiclient.TimestampTool;
 import com.alamkanak.weekview.sample.apiclient.model.WeekEvents;
 
 import java.util.Calendar;
@@ -27,10 +29,18 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         mWeekView.setEditListener(this);
         mWeekView.setEmptyViewClickListener(this);
         mWeekView.setOutCreateClickListener(this);
+        mWeekView.scrollToTime(6);
+        mWeekView.setPastEventEditAble(false);
     }
 
 
     private WeekEvents events = new WeekEvents();
+
+
+    @Override
+    public void onEventClick(WeekView.EventRect event, RectF eventRect) {
+        super.onEventClick(event, eventRect);
+    }
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
@@ -351,14 +361,14 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
 
     @Override
     protected String getEventTitle(Calendar time) {
-        return "看板设计规则调用";
+        return TimestampTool.sdf_all.format(time.getTime());
     }
 
     @Override
     public void onEventLongPress(MotionEvent e, int pos) {
         WeekView.EventRect eventRect = mWeekView.getEventRect(pos);
         Toast.makeText(this, "Long pressed event: " + eventRect.event.getName(), Toast.LENGTH_SHORT).show();
-        mWeekView.setNextPager();
+//        mWeekView.setNextPager();
     }
 
 
@@ -382,7 +392,7 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
     }
 
     @Override
-    public void onEmptyViewClicked(Calendar time) {
+    public void onEmptyViewClicked(Calendar time, boolean pastEventEditAble) {
         int year = time.get(Calendar.YEAR);
         int mouth = time.get(Calendar.MONTH);
         int hour = time.get(Calendar.HOUR_OF_DAY);
@@ -390,11 +400,18 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         startTime.set(Calendar.MINUTE, 0);
         Calendar endTime = (Calendar) startTime.clone();
         endTime.set(Calendar.HOUR_OF_DAY, hour + 1);
-        WeekViewEvent event = new WeekViewEvent(-1, "新建", startTime, endTime);
+        WeekViewEvent event = new WeekViewEvent(-1, "新建日程", startTime, endTime);
         event.setColor(getResources().getColor(R.color.create_event_color));
         event.setCreate(true);
-        events.addEvent(year, mouth + 1, event);
-        mWeekView.notifyDatasetChanged();
+        if (pastEventEditAble) {
+            events.addEvent(year, mouth + 1, event);
+            mWeekView.notifyDatasetChanged();
+        } else {
+            if (event.isAboveToday()) {
+                events.addEvent(year, mouth + 1, event);
+                mWeekView.notifyDatasetChanged();
+            }
+        }
         Toast.makeText(this, " click event: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
     }
 

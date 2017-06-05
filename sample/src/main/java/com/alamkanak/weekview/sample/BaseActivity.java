@@ -14,15 +14,12 @@ import android.widget.Toast;
 import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
-import com.alamkanak.weekview.WeekViewEvent;
 import com.alamkanak.weekview.utils.EventTimeUtils;
-import com.alamkanak.weekview.view.DragScaleView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
-
-import static com.alamkanak.weekview.sample.R.id.drag;
 
 /**
  * This is a base activity which contains week view and all the codes necessary to initialize the
@@ -146,14 +143,26 @@ public abstract class BaseActivity extends AppCompatActivity
             public String interpretDate(Calendar date) {
                 SimpleDateFormat weekdayNameFormat = new SimpleDateFormat("EEE", Locale.getDefault());
                 String weekday = weekdayNameFormat.format(date.getTime());
-                SimpleDateFormat format = new SimpleDateFormat(" M/d", Locale.getDefault());
+                SimpleDateFormat format = new SimpleDateFormat("d", Locale.getDefault());
 
                 // All android api level do not have a standard way of getting the first letter of
                 // the week day name. Hence we get the first char programmatically.
                 // Details: http://stackoverflow.com/questions/16959502/get-one-letter-abbreviation-of-week-day-of-a-date-in-java#answer-16959657
-                if (shortDate)
+                if (shortDate) {
                     weekday = String.valueOf(weekday.charAt(0));
-                return weekday.toUpperCase() + format.format(date.getTime());
+                }
+
+                return format.format(date.getTime());
+            }
+
+            @Override
+            public String interpretWeek(Calendar date) {
+                SimpleDateFormat weekdayNameFormat = new SimpleDateFormat("EEE", Locale.getDefault());
+                String weekday = weekdayNameFormat.format(date.getTime());
+                if (shortDate) {
+                    weekday = String.valueOf(weekday.charAt(0));
+                }
+                return weekday.toUpperCase();
             }
 
             @Override
@@ -180,8 +189,8 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     @Override
-    public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
+    public void onEventClick(WeekView.EventRect event, RectF eventRect) {
+        Toast.makeText(this, "Clicked " + event.event.getName(), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -194,11 +203,16 @@ public abstract class BaseActivity extends AppCompatActivity
 
     @Override
     public void onEventLongPress(MotionEvent e, int pos) {
+
+
+
+
     }
 
 
     @Override
     public void onEmptyViewLongPress(Calendar time) {
+        mWeekView.setCurrectFirstDayPager(Calendar.getInstance());
         Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
     }
 
