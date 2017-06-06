@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * This is a base activity which contains week view and all the codes necessary to initialize the
@@ -29,8 +30,10 @@ import java.util.Locale;
  */
 public abstract class BaseActivity extends AppCompatActivity
         implements WeekView.EventClickListener,
-        MonthLoader.MonthChangeListener, WeekView.EventLongPressListener,
-        WeekView.EmptyViewLongPressListener, View.OnClickListener {
+        MonthLoader.MonthChangeListener,
+        WeekView.EventLongPressListener,
+        WeekView.EmptyViewLongPressListener,
+        View.OnClickListener {
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
@@ -61,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity
         // Set long press listener for events.
         mWeekView.setEventLongPressListener(this);
 
-        // Set long press listener for empty view
+//        Set long press listener for empty view
         mWeekView.setEmptyViewLongPressListener(this);
 
 
@@ -203,8 +206,6 @@ public abstract class BaseActivity extends AppCompatActivity
 
     @Override
     public void onEventLongPress(MotionEvent e, int pos) {
-
-
 
 
     }

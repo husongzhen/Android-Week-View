@@ -21,6 +21,7 @@ public class WeekViewEvent {
     private String mName;
     private String mLocation;
     private int mColor;
+    private int mEditColor;
     private boolean mAllDay;
     private boolean isEditAble = false;
     private boolean isFinish = false;
@@ -184,6 +185,14 @@ public class WeekViewEvent {
 
     public void setColor(int color) {
         this.mColor = color;
+    }
+
+    public int getmEditColor() {
+        return mEditColor;
+    }
+
+    public void setmEditColor(int mEditColor) {
+        this.mEditColor = mEditColor;
     }
 
     public boolean isAllDay() {

@@ -35,7 +35,8 @@ public class BasicTimeActivity extends BaseActivity implements WeekView.EventEdi
         mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
         mWeekView.setTimeSet();
         mWeekView.setEditListener(this);
-        mWeekView.scrollToTime(4);
+        mWeekView.showTimeArea();
+//        mWeekView.scrollToTime(4);
     }
 
     private WeekEvents events = new WeekEvents();
@@ -62,9 +63,9 @@ public class BasicTimeActivity extends BaseActivity implements WeekView.EventEdi
     }
 
 
-    @Override
-    public void onEventLongPress(MotionEvent e, int pos) {
-    }
+//    @Override
+//    public void onEventLongPress(MotionEvent e, int pos) {
+//    }
 
 
 

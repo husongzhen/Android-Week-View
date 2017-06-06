@@ -37,7 +37,7 @@ public class EventTimeUtils {
      * @return
      */
     public float heightToMinute(float height) {
-        if (height == 0){
+        if (height == 0) {
             return 0;
         }
         return height / mHeight;
@@ -45,10 +45,12 @@ public class EventTimeUtils {
 
 
     public Calendar getCurrectTime(Calendar data, final float direct) {
-        int start = (int) (data.get(Calendar.HOUR_OF_DAY) * 60
-                        + data.get(Calendar.MINUTE) + EventTimeUtils.news().heightToMinute(direct));
-        int hour = start / 60;
-        int minute = start % 60;
+
+        int hour = data.get(Calendar.HOUR_OF_DAY);
+        float start = hour * 60
+                + data.get(Calendar.MINUTE) + EventTimeUtils.news().heightToMinute(direct);
+        hour = (int) (start / 60f);
+        int minute = (int) (start % 60f);
         Calendar result = (Calendar) data.clone();
         result.set(Calendar.HOUR_OF_DAY, hour);
         result.set(Calendar.MINUTE, minute);

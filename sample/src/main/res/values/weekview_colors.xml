@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="event_color_01">#FDB2A5</color>
-    <color name="event_color_02">#C7E9FF</color>
-    <color name="event_color_03">#87d288</color>
-    <color name="event_color_04">#f8b552</color>
+    <color name="event_color_01">#FFCDCB</color>
+    <color name="event_color_02">#FFF6E9</color>
+    <color name="event_color_03">#DFF4FF</color>
+    <color name="event_color_04">#CFF6C3</color>
     <color name="create_event_color">#F1F1F1</color>
     <color name="toolbar">#efefef</color>
     <color name="toolbar_text">#8f000000</color>
     <color name="accent">#2789e4</color>
+
+
+    <color name="ie_color">#FDB2A5</color>
+    <color name="iu_color">#F0E48D</color>
+    <color name="ue_color">#C7E9FF</color>
+    <color name="uu_color">#9AE7A0</color>
+
+    <color name="ie_shallow_color">#FFCDCB</color>
+    <color name="iu_shallow_color">#FFF6E9</color>
+    <color name="ue_shallow_color">#DFF4FF</color>
+    <color name="uu_shallow_color">#CFF6C3</color>
 </resources>
