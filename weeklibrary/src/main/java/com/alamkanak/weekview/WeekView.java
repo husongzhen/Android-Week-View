@@ -528,6 +528,7 @@ public class WeekView extends View {
     }
 
     private void showStatus(MotionEvent event) {
+        mScroller.forceFinished(true);
         if (isTouchAllDay(event)) {
             flingType = ALLDAY_TYPE;
         } else {
@@ -571,7 +572,8 @@ public class WeekView extends View {
                         touchAllDayItem.getOriginPoint().y = mScroller.getCurrY();
                         touchAllDayItem.getOriginPoint().x = mScroller.getCurrX();
                     } else {
-                        mCurrentOrigin.y = mScroller.getCurrY();
+//                        mCurrentOrigin.y = mScroller.getCurrY();
+                        setCurrentOriginY(mScroller.getCurrY());
                         mCurrentOrigin.x = mScroller.getCurrX();
                     }
                     ViewCompat.postInvalidateOnAnimation(this);
@@ -991,13 +993,17 @@ public class WeekView extends View {
 //        }
 
         // If the new mCurrentOrigin.y is invalid, make it valid.
-        if (getCurrectOriginY() < getHeight() - mHourHeight * 24 - getHourTop())
-            mCurrentOrigin.y = getHeight() - mHourHeight * 24 - getHourTop();
+        if (getCurrectOriginY() < getHeight() - mHourHeight * 24 - getHourTop()){
+//            mCurrentOrigin.y = getHeight() - mHourHeight * 24 - getHourTop();
+            setCurrentOriginY(getHeight() - mHourHeight * 24 - getHourTop());
+        }
+
 
         // Don't put an "else if" because it will trigger a glitch when completely zoomed out and
         // scrolling vertically.
         if (getCurrectOriginY() > 0) {
-            mCurrentOrigin.y = 0;
+//            mCurrentOrigin.y = 0;
+            setCurrentOriginY(0);
         }
 
         // Consider scroll offset.
@@ -2881,10 +2887,15 @@ public class WeekView extends View {
         if (verticalOffset > mHourHeight * 24 - getHeight() + mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom)
             verticalOffset = (int) (mHourHeight * 24 - getHeight() + mHeaderHeight + mHeaderRowPadding * 2 + mHeaderMarginBottom);
 
-        mCurrentOrigin.y = -verticalOffset;
+//        mCurrentOrigin.y = -verticalOffset;
+        setCurrentOriginY(-verticalOffset);
         invalidate();
     }
 
+
+    private void setCurrentOriginY(float y) {
+        mCurrentOrigin.y = y;
+    }
     /**
      * Get the first hour that is visible on the screen.
      *
