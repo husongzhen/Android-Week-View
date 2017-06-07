@@ -993,7 +993,7 @@ public class WeekView extends View {
 //        }
 
         // If the new mCurrentOrigin.y is invalid, make it valid.
-        if (getCurrectOriginY() < getHeight() - mHourHeight * 24 - getHourTop()){
+        if (getCurrectOriginY() < getHeight() - mHourHeight * 24 - getHourTop()) {
 //            mCurrentOrigin.y = getHeight() - mHourHeight * 24 - getHourTop();
             setCurrentOriginY(getHeight() - mHourHeight * 24 - getHourTop());
         }
@@ -1165,7 +1165,7 @@ public class WeekView extends View {
 
     private void scrollToTimeLine() {
         if (showTimeArea) {
-            if (mEventRects != null && mEventRects.size() > 0 && mEventRects.get(editPos) != null){
+            if (mEventRects != null && mEventRects.size() > 0 && mEventRects.get(editPos) != null) {
                 float top = mHourHeight * 24 * mEventRects.get(editPos).top / 1440 + mHeaderHeight + getHeaderTop();
                 mCurrentOrigin.y = mHourHeight - top;
                 invalidate();
@@ -1209,18 +1209,15 @@ public class WeekView extends View {
 
             top = event.rectF.top + topSum;
             bottom = event.rectF.bottom + bottomSum;
-
-
             float minHeight = mHourHeight * 0.25f;
-
             if (bottom - top <= minHeight) {
                 switch (flingType) {
                     case EDIT_TOP_TYPE:
-                        topSum = bottom - minHeight - event.rectF.top;
+                        topSum = bottom - minHeight - event.rectF.top - mAllDayEventItemPadding * 2;
                         break;
 
                     case EDIT_BOTTOM_TYPE:
-                        bottomSum = top + minHeight - event.rectF.bottom;
+                        bottomSum = top + minHeight - event.rectF.bottom + mAllDayEventItemPadding * 2;
                         break;
                 }
             }
@@ -1270,7 +1267,7 @@ public class WeekView extends View {
                     bottom > getHourTop()) {
 
                 event.rectF = new RectF(left, top, right, bottom);
-                if (bottom - top < minHeight) {
+                if (bottom - top < minHeight - mAllDayEventItemPadding * 2) {
                     drawEventMinHeight(canvas, event, top, left);
                     drawEditMinHeightSizeCircle(canvas, top, left);
                     mEventRects.get(editPos).rectF = null;
@@ -1491,8 +1488,6 @@ public class WeekView extends View {
             }
             canvas.drawRoundRect(mEventRects.get(i).rectF, mEventCornerRadius, mEventCornerRadius, mEventBackgroundPaint);
             drawEventTitle(mEventRects.get(i), mEventRects.get(i).event, mEventRects.get(i).rectF, canvas, top, left);
-
-
         } else {
             mEventRects.get(i).rectF = null;
         }
@@ -1730,20 +1725,25 @@ public class WeekView extends View {
 
     private void drawEventTitle(WeekViewEvent event, RectF rect, Canvas canvas, float originalTop, float originalLeft, String bob, int availableHeight, int availableWidth, int lineHeight) {
         StaticLayout textLayout;//
-        bob = TextUtils.ellipsize(bob, mEventTextPaint, availableWidth, TextUtils.TruncateAt.END).toString();//      显示的高度如果大于行高
+        if (isTimeSet()) {
+            bob = TextUtils.ellipsize(bob, mEventTextPaint, availableWidth, TextUtils.TruncateAt.END).toString();//      显示的高度如果大于行高
+        }
         if (availableHeight >= lineHeight) {
             // Calculate available number of line counts.
             int availableLineCount = availableHeight / lineHeight;
-            textLayout = new StaticLayout(bob, mEventTextPaint, (int) (rect.right - originalLeft - mEventPadding * 2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-//            do {
-//                // Ellipsize text to fit into event rect.
-//                textLayout = new StaticLayout(TextUtils.ellipsize(bob, mEventTextPaint, availableLineCount * availableWidth, TextUtils.TruncateAt.END), mEventTextPaint, (int) (rect.right - originalLeft - mEventPadding * 2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-//
-//                // Reduce line count.
-//                availableLineCount--;
-//
-//                // Repeat until text is short enough.
-//            } while (textLayout.getHeight() > availableHeight);
+            if (isTimeSet()) {
+                textLayout = new StaticLayout(bob, mEventTextPaint, (int) (rect.right - originalLeft - mEventPadding * 2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            } else {
+                do {
+                    // Ellipsize text to fit into event rect.
+                    textLayout = new StaticLayout(TextUtils.ellipsize(bob, mEventTextPaint, availableLineCount * availableWidth, TextUtils.TruncateAt.END), mEventTextPaint, (int) (rect.right - originalLeft - mEventPadding * 2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+                    // Reduce line count.
+                    availableLineCount--;
+                    // Repeat until text is short enough.
+                } while (textLayout.getHeight() > availableHeight);
+
+            }
+
 
             // Draw text.
             canvas.save();
@@ -1751,6 +1751,9 @@ public class WeekView extends View {
             textLayout.draw(canvas);
             canvas.restore();
         } else {
+            if (!isTimeSet()) {
+                return;
+            }
             bob = EventTextUtils.getEventLineTitle(event);
             textLayout = new StaticLayout(bob, mEventTextPaint, availableWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
             originalTop = originalTop - textLayout.getHeight();
@@ -1928,7 +1931,9 @@ public class WeekView extends View {
      * @param event The event to cache.
      */
     private void cacheEvent(WeekViewEvent event) {
-        if (event.getStartTime().compareTo(event.getEndTime()) >= 0)
+        int hour = event.getEndTime().get(Calendar.HOUR_OF_DAY);
+        int minute = event.getEndTime().get(Calendar.MINUTE);
+        if (event.getStartTime().compareTo(event.getEndTime()) >= 0 && !(hour == 0 && minute == 0))
             return;
         List<WeekViewEvent> splitedEvents = event.splitWeekViewEvents();
         for (WeekViewEvent splitedEvent : splitedEvents) {
@@ -1948,26 +1953,33 @@ public class WeekView extends View {
         }
     }
 
+
+    private Comparator<WeekViewEvent> comparator;
+
+
+    public void setComparator(Comparator<WeekViewEvent> comparator) {
+        this.comparator = comparator;
+    }
+
     /**
      * Sorts the events in ascending order.
      *
      * @param events The events to be sorted.
      */
     private void sortEvents(List<? extends WeekViewEvent> events) {
-        Collections.sort(events, new Comparator<WeekViewEvent>() {
-            @Override
-            public int compare(WeekViewEvent event1, WeekViewEvent event2) {
-                long start1 = event1.getStartTime().getTimeInMillis();
-                long start2 = event2.getStartTime().getTimeInMillis();
-                int comparator = start1 > start2 ? 1 : (start1 < start2 ? -1 : 0);
-                if (comparator == 0) {
-                    long end1 = event1.getEndTime().getTimeInMillis();
-                    long end2 = event2.getEndTime().getTimeInMillis();
-                    comparator = end1 > end2 ? 1 : (end1 < end2 ? -1 : 0);
+        if (comparator == null) {
+            comparator = new Comparator<WeekViewEvent>() {
+                @Override
+                public int compare(WeekViewEvent event1, WeekViewEvent event2) {
+                    long start1 = event1.getOrderBy();
+                    long start2 = event2.getOrderBy();
+                    int comparator = start1 < start2 ? 1 : -1;
+                    return comparator;
                 }
-                return comparator;
-            }
-        });
+            };
+
+        }
+        Collections.sort(events, comparator);
     }
 
     /**
@@ -2896,6 +2908,7 @@ public class WeekView extends View {
     private void setCurrentOriginY(float y) {
         mCurrentOrigin.y = y;
     }
+
     /**
      * Get the first hour that is visible on the screen.
      *

@@ -10,9 +10,12 @@ import com.alamkanak.weekview.WeekViewEvent;
 import com.alamkanak.weekview.sample.apiclient.TimestampTool;
 import com.alamkanak.weekview.sample.apiclient.model.WeekEvents;
 
+import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import static com.alamkanak.weekview.sample.apiclient.TimestampTool.sdf_yMd;
 import static com.alamkanak.weekview.utils.EventTimeUtils.news;
 
 /**
@@ -22,6 +25,8 @@ import static com.alamkanak.weekview.utils.EventTimeUtils.news;
  */
 public class BasicActivity extends BaseActivity implements WeekView.EventEditListener, WeekView.EmptyViewClickListener, WeekView.OutCreateClickListener {
 
+
+    private Date start;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +55,18 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         if (mevents != null && mevents.size() > 0) {
             return mevents;
         }
+
+
         Calendar startTime = Calendar.getInstance();
-        startTime.set(Calendar.HOUR_OF_DAY, 3);
+        startTime.set(Calendar.HOUR_OF_DAY, 0);
         startTime.set(Calendar.MINUTE, 0);
+        startTime.set(Calendar.SECOND, 0);
+        startTime.set(Calendar.MILLISECOND, 0);
         startTime.set(Calendar.MONTH, newMonth - 1);
         startTime.set(Calendar.YEAR, newYear);
         Calendar endTime = (Calendar) startTime.clone();
-        endTime.add(Calendar.HOUR, 1);
-        endTime.set(Calendar.MONTH, newMonth - 1);
-        WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime), startTime, endTime);
+        endTime.add(Calendar.HOUR_OF_DAY, 24);
+        WeekViewEvent event = new WeekViewEvent(1, "24", startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         events.addEvent(newYear, newMonth, event);
@@ -78,8 +86,6 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         events.addEvent(newYear, newMonth, event);
 
 
-
-
         startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 3);
         startTime.set(Calendar.MINUTE, 30);
@@ -93,7 +99,6 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_02));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         events.addEvent(newYear, newMonth, event);
-
 
 
         startTime = Calendar.getInstance();
@@ -242,7 +247,6 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         events.addEvent(newYear, newMonth, event);
 
 
-
         //AllDay event
         startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 0);
@@ -273,7 +277,6 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         events.addEvent(newYear, newMonth, event);
 
 
-
         //AllDay event
         startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 0);
@@ -287,8 +290,6 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_03));
         event.setmEditColor(getResources().getColor(R.color.ue_color));
         events.addEvent(newYear, newMonth, event);
-
-
 
 
         //AllDay event
@@ -377,7 +378,7 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
 
     @Override
     protected String getEventTitle(Calendar time) {
-        return TimestampTool.sdf_all.format(time.getTime());
+        return "my name is = " + TimestampTool.sdf_all.format(time.getTime());
     }
 
 //    @Override
@@ -437,7 +438,7 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         int year = time.get(Calendar.YEAR);
         int mouth = time.get(Calendar.MONTH);
         List<WeekViewEvent> list = events.getEvents(year, mouth + 1);
-        if (list.contains(createEvent.event)){
+        if (list.contains(createEvent.event)) {
             list.remove(createEvent.event);
         }
         mWeekView.notifyDatasetChanged();

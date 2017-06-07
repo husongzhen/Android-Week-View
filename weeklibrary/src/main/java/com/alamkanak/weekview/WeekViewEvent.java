@@ -1,5 +1,6 @@
 package com.alamkanak.weekview;
 
+import java.io.Serializable;
 import java.security.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,15 +27,29 @@ public class WeekViewEvent {
     private boolean isEditAble = false;
     private boolean isFinish = false;
     private boolean isCreate = false;
-    private Object realVo;
+    private long orderBy = -1;
+    private SimpleDateFormat sdf_yMd = new SimpleDateFormat("yyyyMMdd");
+
+    public long getOrderBy() {
+        if (orderBy == -1) {
+            return mStartTime.getTimeInMillis();
+        }
+        return orderBy;
+    }
+
+    public void setOrderBy(long orderBy) {
+        this.orderBy = orderBy;
+    }
+
+    private Serializable realVo;
 
     private boolean compToday;
 
-    public void setRealVo(Object realVo) {
+    public void setRealVo(Serializable realVo) {
         this.realVo = realVo;
     }
 
-    public Object getRealVo() {
+    public Serializable getRealVo() {
         return realVo;
     }
 
@@ -63,6 +78,7 @@ public class WeekViewEvent {
     }
 
     public WeekViewEvent() {
+
 
     }
 
@@ -215,10 +231,11 @@ public class WeekViewEvent {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         WeekViewEvent that = (WeekViewEvent) o;
-
-        return mId == that.mId;
+        String day = sdf_yMd.format(getStartTime().getTime());
+        return mId == that.mId
+                && day.equals(sdf_yMd.format(that.getStartTime().getTime()))
+                && sdf_yMd.format(getEndTime().getTime()).equals(sdf_yMd.format(that.getEndTime().getTime()));
 
     }
 
@@ -237,36 +254,50 @@ public class WeekViewEvent {
             endTime = (Calendar) this.getStartTime().clone();
             endTime.set(Calendar.HOUR_OF_DAY, 23);
             endTime.set(Calendar.MINUTE, 59);
-            WeekViewEvent event1 = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), this.getStartTime(), endTime, this.isAllDay());
-            event1.setColor(this.getColor());
-            events.add(event1);
+//            WeekViewEvent event1 = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), this.getStartTime(), endTime, this.isAllDay());
+//            event1.setColor(this.getColor());
+//            events.add(event1);
+            setEndTime(endTime);
+            events.add(this);
 
-            // Add other days.
-            Calendar otherDay = (Calendar) this.getStartTime().clone();
-            otherDay.add(Calendar.DATE, 1);
-            while (!isSameDay(otherDay, this.getEndTime())) {
-                Calendar overDay = (Calendar) otherDay.clone();
-                overDay.set(Calendar.HOUR_OF_DAY, 0);
-                overDay.set(Calendar.MINUTE, 0);
-                Calendar endOfOverDay = (Calendar) overDay.clone();
-                endOfOverDay.set(Calendar.HOUR_OF_DAY, 23);
-                endOfOverDay.set(Calendar.MINUTE, 59);
-                WeekViewEvent eventMore = new WeekViewEvent(this.getId(), this.getName(), null, overDay, endOfOverDay, this.isAllDay());
-                eventMore.setColor(this.getColor());
-                events.add(eventMore);
+//            // Add other days.
+//            Calendar otherDay = (Calendar) this.getStartTime().clone();
+//            otherDay.add(Calendar.DATE, 1);
+//            while (!isSameDay(otherDay, this.getEndTime())) {
+//                Calendar overDay = (Calendar) otherDay.clone();
+//                overDay.set(Calendar.HOUR_OF_DAY, 0);
+//                overDay.set(Calendar.MINUTE, 0);
+//                Calendar endOfOverDay = (Calendar) overDay.clone();
+//                endOfOverDay.set(Calendar.HOUR_OF_DAY, 23);
+//                endOfOverDay.set(Calendar.MINUTE, 59);
+//                WeekViewEvent eventMore = new WeekViewEvent(this.getId(), this.getName(), null, overDay, endOfOverDay, this.isAllDay());
+//                eventMore.setColor(this.getColor());
+//                events.add(eventMore);
+//
+//                // Add next day.
+//                otherDay.add(Calendar.DATE, 1);
+//            }
+//
+//            // Add last day.
+//            Calendar startTime = (Calendar) this.getEndTime().clone();
+//            startTime.set(Calendar.HOUR_OF_DAY, 0);
+//            startTime.set(Calendar.MINUTE, 0);
+//            if (startTime.getTime().getTime() != getEndTime().getTime().getTime()) {
+//                WeekViewEvent event2 = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), startTime, this.getEndTime(), this.isAllDay());
+//                event2.setColor(this.getColor());
+//                events.add(event2);
+//            }
 
-                // Add next day.
-                otherDay.add(Calendar.DATE, 1);
-            }
 
-            // Add last day.
-            Calendar startTime = (Calendar) this.getEndTime().clone();
-            startTime.set(Calendar.HOUR_OF_DAY, 0);
-            startTime.set(Calendar.MINUTE, 0);
-            WeekViewEvent event2 = new WeekViewEvent(this.getId(), this.getName(), this.getLocation(), startTime, this.getEndTime(), this.isAllDay());
-            event2.setColor(this.getColor());
-            events.add(event2);
         } else {
+            int hour = getEndTime().get(Calendar.HOUR_OF_DAY);
+            int minute = getEndTime().get(Calendar.MINUTE);
+            if (0 == hour && minute == 0) {
+                endTime = (Calendar) this.getStartTime().clone();
+                endTime.set(Calendar.HOUR_OF_DAY, 23);
+                endTime.set(Calendar.MINUTE, 59);
+                setEndTime(endTime);
+            }
             events.add(this);
         }
 
