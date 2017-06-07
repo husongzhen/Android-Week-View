@@ -213,7 +213,7 @@ public class WeekView extends View {
     private boolean isEditOutClick;
     private ADayItem touchAllDayItem;
     public int editPos;
-    public long editId;
+    public String editId;
     private PointF editPoint = new PointF(0f, 0f);
     private int timeType = TIME_EVENTS_TYPE;
     //    private RectF topEditRect, bottomEditRect;
@@ -1540,6 +1540,18 @@ public class WeekView extends View {
         float dayRight = dayLeft + mDayColumnWidth;
         float dayBottom = startTop + mHeaderHeight;
         float contentHeight = 0;
+
+//
+//        List<EventRect> mEventRects = this.mEventRects;
+//
+//        if (comparator != null){
+//            Collections.sort(mEventRects, comparator);
+//        }
+
+
+
+
+
         if (mEventRects != null && mEventRects.size() > 0) {
             for (int i = 0; i < mEventRects.size(); i++) {
                 if (isSameDay(mEventRects.get(i).event.getStartTime(), date) && mEventRects.get(i).event.isAllDay()) {
@@ -1967,18 +1979,20 @@ public class WeekView extends View {
      * @param events The events to be sorted.
      */
     private void sortEvents(List<? extends WeekViewEvent> events) {
-        if (comparator == null) {
-            comparator = new Comparator<WeekViewEvent>() {
-                @Override
-                public int compare(WeekViewEvent event1, WeekViewEvent event2) {
-                    long start1 = event1.getOrderBy();
-                    long start2 = event2.getOrderBy();
-                    int comparator = start1 < start2 ? 1 : -1;
-                    return comparator;
+        Comparator comparator = new Comparator<WeekViewEvent>() {
+            @Override
+            public int compare(WeekViewEvent event1, WeekViewEvent event2) {
+                long start1 = event1.getStartTime().getTimeInMillis();
+                long start2 = event2.getStartTime().getTimeInMillis();
+                int comparator = start1 > start2 ? 1 : (start1 < start2 ? -1 : 0);
+                if (comparator == 0) {
+                    long end1 = event1.getEndTime().getTimeInMillis();
+                    long end2 = event2.getEndTime().getTimeInMillis();
+                    comparator = end1 > end2 ? 1 : (end1 < end2 ? -1 : 0);
                 }
-            };
-
-        }
+                return comparator;
+            }
+        };
         Collections.sort(events, comparator);
     }
 

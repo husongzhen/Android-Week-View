@@ -60,13 +60,13 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         Calendar startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 0);
         startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.SECOND, 0);
-        startTime.set(Calendar.MILLISECOND, 0);
         startTime.set(Calendar.MONTH, newMonth - 1);
         startTime.set(Calendar.YEAR, newYear);
         Calendar endTime = (Calendar) startTime.clone();
-        endTime.add(Calendar.HOUR_OF_DAY, 24);
-        WeekViewEvent event = new WeekViewEvent(1, "24", startTime, endTime);
+        endTime.set(Calendar.HOUR_OF_DAY, 24);
+        endTime.set(Calendar.MINUTE, 0);
+        endTime.set(Calendar.MONTH, newMonth - 1);
+        WeekViewEvent event = new WeekViewEvent(111, "24", startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         events.addEvent(newYear, newMonth, event);
