@@ -63,6 +63,7 @@ public class WeekView extends View {
     private EventRect createEvent;
     private int toTime;
     private boolean pastEventEditAble = true;
+    private List<EventRect> allDaySortEvents;
 
     public void setPastEventEditAble(boolean pastEventEditAble) {
         this.pastEventEditAble = pastEventEditAble;
@@ -1541,17 +1542,9 @@ public class WeekView extends View {
         float dayBottom = startTop + mHeaderHeight;
         float contentHeight = 0;
 
-//
-//        List<EventRect> mEventRects = this.mEventRects;
-//
-//        if (comparator != null){
-//            Collections.sort(mEventRects, comparator);
-//        }
 
 
-
-
-
+        List<EventRect>  mEventRects = allDaySortEvents;
         if (mEventRects != null && mEventRects.size() > 0) {
             for (int i = 0; i < mEventRects.size(); i++) {
                 if (isSameDay(mEventRects.get(i).event.getStartTime(), date) && mEventRects.get(i).event.isAllDay()) {
@@ -1907,11 +1900,27 @@ public class WeekView extends View {
             }
         }
         calculatePositionsEvents();
+
+        sortEventAllDay();
+
+
+
+    }
+
+    private void sortEventAllDay() {
+        allDaySortEvents = this.mEventRects;
+        if (comparator != null){
+            Collections.sort(allDaySortEvents, comparator);
+        }
     }
 
     private void calculatePositionsEvents() {
         // Prepare to calculate positions of each events.
         List<EventRect> tempEvents = mEventRects;
+//        if (comparator != null){
+//            Collections.sort(tempEvents, comparator);
+//        }
+
         mEventRects = new ArrayList<EventRect>();
 
         // Iterate through each day with events to calculate the position of the events.
@@ -1966,10 +1975,10 @@ public class WeekView extends View {
     }
 
 
-    private Comparator<WeekViewEvent> comparator;
+    private Comparator comparator;
 
 
-    public void setComparator(Comparator<WeekViewEvent> comparator) {
+    public void setComparator(Comparator comparator) {
         this.comparator = comparator;
     }
 
