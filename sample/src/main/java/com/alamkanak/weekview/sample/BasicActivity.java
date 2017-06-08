@@ -35,6 +35,12 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         mWeekView.setEmptyViewClickListener(this);
         mWeekView.setOutCreateClickListener(this);
         mWeekView.scrollToTime(6);
+        mWeekView.setSortAllDayEvents(new WeekView.SortAllDayEvents() {
+            @Override
+            public List<WeekView.EventRect> sort(List<WeekView.EventRect> lists) {
+                return lists;
+            }
+        });
         mWeekView.setPastEventEditAble(false);
     }
 

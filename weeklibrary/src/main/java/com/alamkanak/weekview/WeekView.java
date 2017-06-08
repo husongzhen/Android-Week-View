@@ -42,6 +42,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import static android.media.CamcorderProfile.get;
 import static com.alamkanak.weekview.WeekViewUtil.isSameDay;
 import static com.alamkanak.weekview.WeekViewUtil.today;
 
@@ -1544,10 +1545,12 @@ public class WeekView extends View {
 
 
 
-        List<EventRect>  mEventRects = allDaySortEvents;
-        if (mEventRects != null && mEventRects.size() > 0) {
-            for (int i = 0; i < mEventRects.size(); i++) {
-                if (isSameDay(mEventRects.get(i).event.getStartTime(), date) && mEventRects.get(i).event.isAllDay()) {
+        List<EventRect>  sortEvents = allDaySortEvents;
+        if (sortEvents != null && sortEvents.size() > 0) {
+            for (int i = 0; i < sortEvents.size(); i++) {
+                EventRect eventRect = sortEvents.get(i);
+                if (isSameDay(eventRect.event.getStartTime(), date) && eventRect.event.isAllDay()) {
+                    int index = mEventRects.indexOf(eventRect);
                     // Calculate top.
                     float top = allDayTopSum + dayItem.getOriginPoint().y;
                     contentHeight += allDayHeight;
@@ -1569,13 +1572,13 @@ public class WeekView extends View {
                             right > mHeaderColumnWidth &&
                             bottom > 0
                             ) {
-                        dayItem.addEvent(mEventRects.get(i));
-                        mEventRects.get(i).rectF = new RectF(left, top + mAllDayEventItemPadding * 2, right - mAllDayEventItemPadding * 2, bottom);
-                        mEventBackgroundPaint.setColor(mEventRects.get(i).event.getColor() == 0 ? mDefaultEventColor : mEventRects.get(i).event.getColor());
-                        canvas.drawRoundRect(mEventRects.get(i).rectF, mEventCornerRadius, mEventCornerRadius, mEventBackgroundPaint);
-                        drawAllDayEventTitle(mEventRects.get(i).event, mEventRects.get(i).rectF, canvas, top, left);
+                        dayItem.addEvent(mEventRects.get(index));
+                        mEventRects.get(index).rectF = new RectF(left, top + mAllDayEventItemPadding * 2, right - mAllDayEventItemPadding * 2, bottom);
+                        mEventBackgroundPaint.setColor(mEventRects.get(index).event.getColor() == 0 ? mDefaultEventColor : mEventRects.get(index).event.getColor());
+                        canvas.drawRoundRect(mEventRects.get(index).rectF, mEventCornerRadius, mEventCornerRadius, mEventBackgroundPaint);
+                        drawAllDayEventTitle(mEventRects.get(index).event, mEventRects.get(index).rectF, canvas, top, left);
                     } else
-                        mEventRects.get(i).rectF = null;
+                        mEventRects.get(index).rectF = null;
                 }
             }
 
@@ -1839,12 +1842,16 @@ public class WeekView extends View {
         // Get more events if the month is changed.
         if (mEventRects == null)
             mEventRects = new ArrayList<EventRect>();
+
+        if (allDaySortEvents == null)
+            allDaySortEvents = new ArrayList<EventRect>();
         if (mWeekViewLoader == null && !isInEditMode())
             throw new IllegalStateException("You must provide a MonthChangeListener");
 
         // If a refresh was requested then reset some variables.
         if (mRefreshEvents) {
             mEventRects.clear();
+            allDaySortEvents.clear();
             mPreviousPeriodEvents = null;
             mCurrentPeriodEvents = null;
             mNextPeriodEvents = null;
@@ -1888,6 +1895,7 @@ public class WeekView extends View {
 
                 // Clear events.
                 mEventRects.clear();
+                allDaySortEvents.clear();
                 sortAndCacheEvents(previousPeriodEvents);
                 sortAndCacheEvents(currentPeriodEvents);
                 sortAndCacheEvents(nextPeriodEvents);
@@ -1900,17 +1908,26 @@ public class WeekView extends View {
             }
         }
         calculatePositionsEvents();
-
         sortEventAllDay();
+    }
+
+
+    public interface  SortAllDayEvents{
+        List<EventRect> sort(List<EventRect> lists);
+    }
 
 
 
+    private SortAllDayEvents sortAllDayEvents;
+
+    public void setSortAllDayEvents(SortAllDayEvents sortEvents) {
+        this.sortAllDayEvents = sortEvents;
     }
 
     private void sortEventAllDay() {
-        allDaySortEvents = this.mEventRects;
-        if (comparator != null){
-            Collections.sort(allDaySortEvents, comparator);
+        List<EventRect> tempEvents = mEventRects;
+        if (sortAllDayEvents != null){
+            allDaySortEvents = sortAllDayEvents.sort(tempEvents);
         }
     }
 
