@@ -42,7 +42,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import static android.media.CamcorderProfile.get;
 import static com.alamkanak.weekview.WeekViewUtil.isSameDay;
 import static com.alamkanak.weekview.WeekViewUtil.today;
 
@@ -224,6 +223,13 @@ public class WeekView extends View {
     private float topSum, bottomSum;
     private EventEditListener editListener;
 
+
+    //allday
+    private int allDayHeight = 100;
+    private float allDayTopSum = 0;
+    private AllDayMap dayMap = new AllDayMap();
+
+
     public void setEditListener(EventEditListener editListener) {
         this.editListener = editListener;
     }
@@ -252,6 +258,8 @@ public class WeekView extends View {
             if (mIsZooming)
                 return true;
 
+
+            mScroller.forceFinished(true);
             switch (mCurrentScrollDirection) {
                 case NONE: {
                     // Allow scrolling only in one direction.
@@ -635,6 +643,7 @@ public class WeekView extends View {
             mHourSeparatorColor = a.getColor(R.styleable.WeekView_hourSeparatorColor, mHourSeparatorColor);
             mTodayBackgroundColor = a.getColor(R.styleable.WeekView_todayBackgroundColor, mTodayBackgroundColor);
             mHourSeparatorHeight = a.getDimensionPixelSize(R.styleable.WeekView_hourSeparatorHeight, mHourSeparatorHeight);
+            allDayHeight = a.getDimensionPixelSize(R.styleable.WeekView_allDayHeight, allDayHeight);
             mTodayHeaderTextColor = a.getColor(R.styleable.WeekView_todayHeaderTextColor, mTodayHeaderTextColor);
             mEventTextSize = a.getDimensionPixelSize(R.styleable.WeekView_eventTextSize, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, mEventTextSize, context.getResources().getDisplayMetrics()));
             mCreateEventSize = a.getDimensionPixelSize(R.styleable.WeekView_createEventSize, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, mCreateEventSize, context.getResources().getDisplayMetrics()));
@@ -916,6 +925,7 @@ public class WeekView extends View {
         canvas.drawRect(0, getHourTop(), mHeaderColumnWidth, getHeight(), mHeaderColumnBackgroundPaint);
         // Clip to paint in left column only.
         canvas.clipRect(0, getHourTop(), mHeaderColumnWidth, getHeight(), Region.Op.REPLACE);
+        canvas.drawLine(mHeaderColumnWidth, getHourTop(), mHeaderColumnWidth, getHeight(), mHourSeparatorPaint);
 
         for (int i = 0; i < 24; i++) {
             float top = getHourColumnTop() + getCurrectOriginY() + mHourHeight * i + mHeaderMarginBottom;
@@ -1092,6 +1102,7 @@ public class WeekView extends View {
             drawEvents(day, startPixel, canvas);
             drawNowTime(canvas, startPixel, sameDay, start);
             drawColumnLine(canvas, startPixel);
+            canvas.drawLine(mHeaderColumnWidth, getHourTop(), getWidth(), getHourTop(), mHourSeparatorPaint);
             // In the next iteration, start from the next day.
             startPixel += mDayColumnWidth + mColumnGap;
 
@@ -1504,10 +1515,6 @@ public class WeekView extends View {
     }
 
 
-    private float allDayHeight = 100;
-    private float allDayTopSum = 0;
-    private AllDayMap dayMap = new AllDayMap();
-
     /**
      * Draw all the Allday-events of a particular day.
      *
@@ -1534,7 +1541,7 @@ public class WeekView extends View {
         if (dayItem.getOriginPoint().y > 0) {
             dayItem.getOriginPoint().y = 0;
         }
-        allDayHeight = mEventPadding * 2 + mTimeTextHeight;
+//        allDayHeight = mEventPadding * 2 + mTimeTextHeight;
         float startTop = getHeaderTop();
         allDayTopSum = startTop;
         float dayTop = startTop;
@@ -1544,8 +1551,7 @@ public class WeekView extends View {
         float contentHeight = 0;
 
 
-
-        List<EventRect>  sortEvents = allDaySortEvents;
+        List<EventRect> sortEvents = allDaySortEvents;
         if (sortEvents != null && sortEvents.size() > 0) {
             for (int i = 0; i < sortEvents.size(); i++) {
                 EventRect eventRect = sortEvents.get(i);
@@ -1912,10 +1918,9 @@ public class WeekView extends View {
     }
 
 
-    public interface  SortAllDayEvents{
+    public interface SortAllDayEvents {
         List<EventRect> sort(List<EventRect> lists);
     }
-
 
 
     private SortAllDayEvents sortAllDayEvents;
@@ -1926,7 +1931,7 @@ public class WeekView extends View {
 
     private void sortEventAllDay() {
         List<EventRect> tempEvents = mEventRects;
-        if (sortAllDayEvents != null){
+        if (sortAllDayEvents != null) {
             allDaySortEvents = sortAllDayEvents.sort(tempEvents);
         }
     }
