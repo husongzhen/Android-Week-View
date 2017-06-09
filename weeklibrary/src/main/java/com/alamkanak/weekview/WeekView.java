@@ -326,7 +326,7 @@ public class WeekView extends View {
                 return true;
             }
 
-            mScroller.forceFinished(true);
+//            mScroller.forceFinished(true);
 
             mCurrentFlingDirection = mCurrentScrollDirection;
             switch (mCurrentFlingDirection) {
@@ -338,7 +338,7 @@ public class WeekView extends View {
                     break;
                 case VERTICAL:
                     if (viewStatue == EDIT_STATUE) {
-                        mScroller.fling((int) mCurrentOrigin.x, (int) getCurrectOriginY(), 0, (int) velocityY, Integer.MIN_VALUE, Integer.MAX_VALUE, (int) -(mHourHeight * 24 + getHourTop() - getHeight()), 0);
+//                        mScroller.fling((int) mCurrentOrigin.x, (int) getCurrectOriginY(), 0, (int) velocityY, Integer.MIN_VALUE, Integer.MAX_VALUE, (int) -(mHourHeight * 24 + getHourTop() - getHeight()), 0);
                         return true;
                     }
 
@@ -429,9 +429,6 @@ public class WeekView extends View {
         @Override
         public void onLongPress(MotionEvent e) {
             super.onLongPress(e);
-//            if (viewStatue == EDIT_STATUE) {
-//                return;
-//            }
 
 
             if (mEventLongPressListener != null && mEventRects != null) {
@@ -439,15 +436,6 @@ public class WeekView extends View {
                 for (int i = 0; i < size; i++) {
                     EventRect event = mEventRects.get(i);
                     if (event.rectF != null && e.getX() > event.rectF.left && e.getX() < event.rectF.right && e.getY() > event.rectF.top && e.getY() < event.rectF.bottom) {
-//                        if (!event.event.isAllDay()) {
-//                            if (pastEventEditAble) {
-//                                setEditEvent(i);
-//                            } else {
-//                                if (event.event.isAboveToday()) {
-//                                    setEditEvent(i);
-//                                }
-//                            }
-//                        }
                         mEventLongPressListener.onEventLongPress(e, i);
                         performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
 
@@ -512,14 +500,6 @@ public class WeekView extends View {
                 }
                 break;
 
-//
-//            case MotionEvent.ACTION_MOVE:
-//                if (speedType == SPEED_TOP_STATUE) {
-//                } else if (speedType == SPEED_BOTTOM_STATUE) {
-////                    mCurrentOrigin.y -= speed;
-////                    editPoint.y += speed;
-//                }
-//            break;
         }
 
 
@@ -568,29 +548,45 @@ public class WeekView extends View {
     public void computeScroll() {
         super.computeScroll();
 
+
         if (mScroller.isFinished()) {
             if (mCurrentFlingDirection != Direction.NONE) {
                 // Snap to day after fling is finished.
                 goToNearestOrigin();
             }
         } else {
-            if (mCurrentFlingDirection != Direction.NONE && forceFinishScroll()) {
-                goToNearestOrigin();
-            } else if (mScroller.computeScrollOffset()) {
-                if (viewStatue != EDIT_STATUE) {
-                    if (flingType == ALLDAY_TYPE) {
-                        touchAllDayItem.getOriginPoint().y = mScroller.getCurrY();
-                        touchAllDayItem.getOriginPoint().x = mScroller.getCurrX();
-                    } else {
-//                        mCurrentOrigin.y = mScroller.getCurrY();
-                        setCurrentOriginY(mScroller.getCurrY());
-                        mCurrentOrigin.x = mScroller.getCurrX();
+            if (flingType == ALLDAY_TYPE) {
+                if (mScroller.computeScrollOffset()) {
+                    if (mScroller.isFinished()) {
+                        return;
                     }
+                    touchAllDayItem.getOriginPoint().y = mScroller.getCurrY();
+                    touchAllDayItem.getOriginPoint().x = mScroller.getCurrX();
+                }
+            } else {
+                if (mCurrentFlingDirection != Direction.NONE && forceFinishScroll()) {
+                    goToNearestOrigin();
+                } else if (mScroller.computeScrollOffset()) {
+//                    if (viewStatue != EDIT_STATUE) {
+//                        if (flingType == ALLDAY_TYPE && mCurrentFlingDirection == Direction.NONE) {
+//                            if (mScroller.isFinished()) {
+//                                return;
+//                            }
+//                            touchAllDayItem.getOriginPoint().y = mScroller.getCurrY();
+//                            touchAllDayItem.getOriginPoint().x = mScroller.getCurrX();
+//                        } else {
+                    setCurrentOriginY(mScroller.getCurrY());
+                    mCurrentOrigin.x = mScroller.getCurrX();
+//                        }
                     ViewCompat.postInvalidateOnAnimation(this);
+//                }
                 }
             }
+
         }
+
     }
+
 
     private boolean isTimeSet() {
         return timeType == TIME_SET_TYPE;
@@ -1128,23 +1124,25 @@ public class WeekView extends View {
             if (dayLabel == null)
                 throw new IllegalStateException("A DateTimeInterpreter must not return null date");
             drawAllDayEvents(day, startPixel, canvas);
-            if (!isTimeSet()) {
-                Paint weekPaint = sameDay ? mTodayHeaderTextPaint : mHeaderTextPaint;
-                Paint labelPaint = sameDay ? mWeekHeaderTextPaint : mHeaderWeekTextPaint;
-                float daywidth = labelPaint.measureText(dayLabel);
-                float weekwidth = weekPaint.measureText(dayWeek);
-                float startX = startPixel + (mDayColumnWidth - daywidth - weekwidth) / 2;
-                canvas.drawRect(startPixel, 0, startPixel + mDayColumnWidth, getHeaderTop(), mHeaderBackgroundPaint);
-                canvas.drawText(dayLabel, startX, mHeaderTextHeight + mHeaderRowPadding, labelPaint);
-                canvas.drawText(dayWeek, startX + weekwidth, mHeaderTextHeight + mHeaderRowPadding, weekPaint);
-            }
-
-
+            drawWeekHeader(canvas, startPixel, sameDay, dayLabel, dayWeek);
             startPixel += mDayColumnWidth + mColumnGap;
         }
 
         scrollToTimeLine();
         initTimeLine();
+    }
+
+    private void drawWeekHeader(Canvas canvas, float startPixel, boolean sameDay, String dayLabel, String dayWeek) {
+        if (!isTimeSet()) {
+            Paint weekPaint = sameDay ? mTodayHeaderTextPaint : mHeaderTextPaint;
+            Paint labelPaint = sameDay ? mWeekHeaderTextPaint : mHeaderWeekTextPaint;
+            float daywidth = labelPaint.measureText(dayLabel);
+            float weekwidth = weekPaint.measureText(dayWeek);
+            float startX = startPixel + (mDayColumnWidth - daywidth - weekwidth) / 2;
+            canvas.drawRect(startPixel, 0, startPixel + mDayColumnWidth, getHeaderTop(), mHeaderBackgroundPaint);
+            canvas.drawText(dayLabel, startX, mHeaderTextHeight + mHeaderRowPadding, labelPaint);
+            canvas.drawText(dayWeek, startX + weekwidth, mHeaderTextHeight + mHeaderRowPadding, weekPaint);
+        }
     }
 
     private void initTimeLine() {
@@ -1246,7 +1244,7 @@ public class WeekView extends View {
 
             }
 
-            if (bottom > mHourHeight * 24 + getHourTop() + getCurrectOriginY()) {
+            while (bottom > mHourHeight * 24 + getHourTop() + getCurrectOriginY()) {
                 bottomSum = mHourHeight * 24 + getHourTop() + getCurrectOriginY() - mHourHeight / 60 - event.rectF.bottom;
                 if (flingType == EDIT_BOTTOM_TYPE) {
                     topSum = 0;
@@ -1254,11 +1252,11 @@ public class WeekView extends View {
                     topSum = bottomSum;
                 }
 
+//                top = event.rectF.top + topSum;
+                bottom = event.rectF.bottom + bottomSum;
             }
-
-
             top = event.rectF.top + topSum;
-            bottom = event.rectF.bottom + bottomSum;
+
 
 //            if (top < mHourHeight && mCurrentOrigin.y != 0) {
 //                speedType = SPEED_TOP_STATUE;
@@ -2964,11 +2962,11 @@ public class WeekView extends View {
     }
 
 
-    /////////////////////////////////////////////////////////////////
-    //
-    //      Interfaces.
-    //
-    /////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+//
+//      Interfaces.
+//
+/////////////////////////////////////////////////////////////////
 
     public interface EventClickListener {
         /**
@@ -3035,6 +3033,7 @@ public class WeekView extends View {
          * @param oldFirstVisibleDay The old first visible day (is null on the first call).
          */
         void onFirstVisibleDayChanged(Calendar newFirstVisibleDay, Calendar oldFirstVisibleDay);
+
     }
 
 
