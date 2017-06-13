@@ -12,6 +12,7 @@
         </attr>
         <attr name="hourHeight" format="dimension"/>
         <attr name="minHourHeight" format="dimension"/>
+        <attr name="addIconRect" format="dimension"/>
         <attr name="maxHourHeight" format="dimension"/>
         <attr name="textSize" format="dimension"/>
         <attr name="weekTextSize" format="dimension"/>
@@ -20,6 +21,7 @@
         <attr name="headerColumnPadding" format="dimension"/>
         <attr name="headerRowPadding" format="dimension"/>
         <attr name="columnGap" format="dimension"/>
+        <attr name="addIconReference" format="reference"/>
         <attr name="headerColumnTextColor" format="color"/>
         <attr name="noOfVisibleDays" format="integer"/>
         <attr name="showFirstDayOfWeekFirst" format="boolean"/>
@@ -36,6 +38,7 @@
         <attr name="eventFinishTextColor" format="color"/>
         <attr name="eventPadding" format="dimension"/>
         <attr name="allDayEventItemPadding" format="dimension"/>
+        <attr name="editCicleDistance" format="integer"/>
         <attr name="touchEditCicleR" format="dimension"/>
         <attr name="eventLeftColorWidth" format="dimension"/>
         <attr name="headerColumnBackground" format="color"/>
