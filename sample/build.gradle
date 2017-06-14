@@ -22,6 +22,14 @@ android {
         //让AS识别libs下的.so第三方包
         jniLibs.srcDirs = ['libs']
     }
+
+    android {
+        lintOptions {
+            abortOnError false
+        }
+    }
+
+
 }
 
 dependencies {
