@@ -1761,6 +1761,12 @@ public class WeekView extends View {
         int availableHeight = (int) (rect.bottom - rect.top - mEventPadding * 2);
         int availableWidth = (int) (rect.right - rect.left - mEventPadding * 2);
 
+
+        if (availableHeight <= 0 || availableWidth <= 0) {
+            return;
+        }
+
+
         // Get text dimensions.
         StaticLayout textLayout = new StaticLayout(bob, mEventTextPaint, availableWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
 
