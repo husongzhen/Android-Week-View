@@ -76,7 +76,10 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
-        event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         startTime = Calendar.getInstance();
@@ -92,7 +95,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_02));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
-        event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -109,7 +113,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_02));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
-        event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -125,7 +130,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event = new WeekViewEvent(110, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_02));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
-        event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         startTime = Calendar.getInstance();
@@ -139,6 +145,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event = new WeekViewEvent(10, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_03));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         startTime = Calendar.getInstance();
@@ -152,6 +160,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event = new WeekViewEvent(2, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_02));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         startTime = Calendar.getInstance();
@@ -166,6 +176,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event = new WeekViewEvent(3, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_03));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -181,6 +193,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event = new WeekViewEvent(23, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_04));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -195,6 +209,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event = new WeekViewEvent(24, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_04));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -210,6 +226,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_04));
         event.setmEditColor(getResources().getColor(R.color.uu_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         startTime = Calendar.getInstance();
@@ -224,6 +242,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         startTime = Calendar.getInstance();
@@ -238,6 +258,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_02));
         event.setmEditColor(getResources().getColor(R.color.iu_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         //AllDay event
@@ -252,6 +274,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_04));
         event.setmEditColor(getResources().getColor(R.color.uu_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -265,9 +289,12 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         endTime.add(Calendar.HOUR_OF_DAY, 23);
         endTime.set(Calendar.MINUTE, 2);
         event = new WeekViewEvent(12, getEventTitle(startTime), null, startTime, endTime, true);
+        event.setFinish(true);
         event.setColor(getResources().getColor(R.color.event_color_03));
         event.setmEditColor(getResources().getColor(R.color.ue_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -284,6 +311,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_03));
         event.setmEditColor(getResources().getColor(R.color.ue_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -301,6 +330,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_03));
         event.setmEditColor(getResources().getColor(R.color.ue_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -317,6 +348,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_03));
         event.setmEditColor(getResources().getColor(R.color.ue_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -334,6 +367,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 
@@ -351,6 +386,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setmEditColor(getResources().getColor(R.color.ue_color));
         event.setFinish(true);
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         // All day event until 00:00 next day
@@ -368,6 +405,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         // All day event until 00:00 next day
@@ -385,6 +424,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
         // All day event until 00:00 next day
@@ -402,6 +443,8 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setmEditColor(getResources().getColor(R.color.ie_color));
         event.setmTitleColor(getResources().getColor(R.color.ie_title_color));
+        event.setmFinishColor(getResources().getColor(R.color.ie_finish_color));
+        event.setmBoarderColor(getResources().getColor(R.color.ie_boarder_color));
         events.addEvent(newYear, newMonth, event);
 
 

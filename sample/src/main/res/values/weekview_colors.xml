@@ -10,8 +10,10 @@
     <color name="accent">#2789e4</color>
 
 
-    <color name="ie_color">#FDB2A5</color>
+    <color name="ie_color">#F9D7DA</color>
     <color name="ie_title_color">#FF7A7A</color>
+    <color name="ie_finish_color">#55FF7A7A</color>
+    <color name="ie_boarder_color">#FCB2A5</color>
     <color name="iu_color">#F0E48D</color>
     <color name="ue_color">#C7E9FF</color>
     <color name="uu_color">#9AE7A0</color>

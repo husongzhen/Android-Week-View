@@ -28,6 +28,8 @@
         <attr name="headerRowBackgroundColor" format="color"/>
         <attr name="dayBackgroundColor" format="color"/>
         <attr name="hourSeparatorColor" format="color"/>
+        <attr name="mTimeLineSeparatorColor" format="color"/>
+        <attr name="mAllDaySeparatorColor" format="color"/>
         <attr name="todayBackgroundColor" format="color"/>
         <attr name="todayHeaderTextColor" format="color"/>
         <attr name="hourSeparatorHeight" format="dimension"/>
@@ -35,6 +37,8 @@
         <attr name="nowLineCircleR" format="dimension"/>
         <attr name="eventTextColor" format="color"/>
         <attr name="mCreateEventColor" format="color"/>
+        <attr name="mTimeColumnBgColor" format="color"/>
+        <attr name="mHeaderLabelBackColor" format="color"/>
         <attr name="eventFinishTextColor" format="color"/>
         <attr name="eventPadding" format="dimension"/>
         <attr name="allDayEventItemPadding" format="dimension"/>

@@ -1,5 +1,7 @@
 package com.alamkanak.weekview;
 
+import android.graphics.Color;
+
 import java.io.Serializable;
 import java.security.Timestamp;
 import java.text.SimpleDateFormat;
@@ -22,6 +24,20 @@ public class WeekViewEvent {
     private String mName;
     private String mLocation;
 
+
+    private int mColor;
+    private int mBoarderColor;
+    private int mTitleColor;
+    private int mFinishColor;
+    private int mEditColor;
+    private boolean mAllDay;
+    private boolean isEditAble = false;
+    private boolean isFinish = false;
+    private boolean isCreate = false;
+    private long orderBy = -1;
+    private SimpleDateFormat sdf_yMd = new SimpleDateFormat("yyyyMMdd");
+
+
     public int getmTitleColor() {
         return mTitleColor;
     }
@@ -30,15 +46,22 @@ public class WeekViewEvent {
         this.mTitleColor = mTitleColor;
     }
 
-    private int mColor;
-    private int mTitleColor;
-    private int mEditColor;
-    private boolean mAllDay;
-    private boolean isEditAble = false;
-    private boolean isFinish = false;
-    private boolean isCreate = false;
-    private long orderBy = -1;
-    private SimpleDateFormat sdf_yMd = new SimpleDateFormat("yyyyMMdd");
+
+    public int getmBoarderColor() {
+        return mBoarderColor;
+    }
+
+    public void setmBoarderColor(int mBoarderColor) {
+        this.mBoarderColor = mBoarderColor;
+    }
+
+    public void setmFinishColor(int mFinishColor) {
+        this.mFinishColor = mFinishColor;
+    }
+
+    public int getmFinishColor() {
+        return mFinishColor;
+    }
 
     public long getOrderBy() {
         if (orderBy == -1) {

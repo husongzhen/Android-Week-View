@@ -16,6 +16,7 @@ import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewCompat;
@@ -74,6 +75,7 @@ public class WeekView extends View {
     private int editCicleDistance;
     private Path path;
     private int rectMargin = 2;
+    private Paint timeColumnBgPaint;
 
     public void setPastEventEditAble(boolean pastEventEditAble) {
         this.pastEventEditAble = pastEventEditAble;
@@ -107,11 +109,13 @@ public class WeekView extends View {
     private PointF mCurrentOrigin = new PointF(0f, 0f);
     private Direction mCurrentScrollDirection = Direction.NONE;
     private Paint mHeaderBackgroundPaint;
+    private Paint mHeaderLabelBackgroundPaint;
     private Paint mAllDayBackShaderPaint;
     //   一列的宽度
     private float mDayColumnWidth;
     private Paint mDayBackgroundPaint;
     private Paint mHourSeparatorPaint;
+    private Paint mTimeLineSeparatorPaint;
     private float mHeaderMarginBottom;
     private Paint mTodayBackgroundPaint;
     private Paint mFutureBackgroundPaint;
@@ -166,6 +170,8 @@ public class WeekView extends View {
     private int mNowLineColor = Color.rgb(102, 102, 102);
     private int mNowLineThickness = 5;
     private int mHourSeparatorColor = Color.rgb(230, 230, 230);
+    private int mTimeLineSeparatorColor = Color.rgb(230, 230, 230);
+    private int mAllDaySeparatorColor = Color.rgb(230, 230, 230);
     private int mTodayBackgroundColor = Color.rgb(239, 247, 254);
     private int mHourSeparatorHeight = 1;
     private int mTodayHeaderTextColor = Color.rgb(39, 137, 228);
@@ -175,7 +181,9 @@ public class WeekView extends View {
     private int mEventBackColor = Color.WHITE;
     private int addIconReference = R.drawable.appwidget_add;
     private int mCreateEventColor = Color.BLACK;
+    private int mTimeColumnBgColor = Color.WHITE;
     private int mEventFinishTextColor = Color.GRAY;
+    private int mHeaderLabelBackColor = Color.WHITE;
     private int mEventPadding = 10;
     private int mAllDayEventItemPadding = 2;
     private int mHeaderColumnBackgroundColor = Color.WHITE;
@@ -652,6 +660,8 @@ public class WeekView extends View {
             mNowLineColor = a.getColor(R.styleable.WeekView_nowLineColor, mNowLineColor);
             mNowLineThickness = a.getDimensionPixelSize(R.styleable.WeekView_nowLineThickness, mNowLineThickness);
             mHourSeparatorColor = a.getColor(R.styleable.WeekView_hourSeparatorColor, mHourSeparatorColor);
+            mTimeLineSeparatorColor = a.getColor(R.styleable.WeekView_mTimeLineSeparatorColor, mTimeLineSeparatorColor);
+            mAllDaySeparatorColor = a.getColor(R.styleable.WeekView_mAllDaySeparatorColor, mAllDaySeparatorColor);
             mTodayBackgroundColor = a.getColor(R.styleable.WeekView_todayBackgroundColor, mTodayBackgroundColor);
             mHourSeparatorHeight = a.getDimensionPixelSize(R.styleable.WeekView_hourSeparatorHeight, mHourSeparatorHeight);
             allDayHeight = a.getDimensionPixelSize(R.styleable.WeekView_allDayHeight, allDayHeight);
@@ -660,6 +670,8 @@ public class WeekView extends View {
             mCreateEventSize = a.getDimensionPixelSize(R.styleable.WeekView_createEventSize, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, mCreateEventSize, context.getResources().getDisplayMetrics()));
             mEventTextColor = a.getColor(R.styleable.WeekView_eventTextColor, mEventTextColor);
             mCreateEventColor = a.getColor(R.styleable.WeekView_mCreateEventColor, mCreateEventColor);
+            mTimeColumnBgColor = a.getColor(R.styleable.WeekView_mTimeColumnBgColor, mTimeColumnBgColor);
+            mHeaderLabelBackColor = a.getColor(R.styleable.WeekView_mHeaderLabelBackColor, mHeaderLabelBackColor);
             mEventFinishTextColor = a.getColor(R.styleable.WeekView_eventFinishTextColor, mEventFinishTextColor);
             mEventPadding = a.getDimensionPixelSize(R.styleable.WeekView_eventPadding, mEventPadding);
             mAllDayEventItemPadding = a.getDimensionPixelSize(R.styleable.WeekView_eventPadding, mAllDayEventItemPadding);
@@ -733,9 +745,14 @@ public class WeekView extends View {
         // Prepare header background paint.
         mHeaderBackgroundPaint = new Paint();
         mHeaderBackgroundPaint.setColor(mHeaderRowBackgroundColor);
+
+
+        mHeaderLabelBackgroundPaint = new Paint();
+        mHeaderLabelBackgroundPaint.setColor(mHeaderLabelBackColor);
+
         mAllDayBackShaderPaint = new Paint();
         mAllDayBackShaderPaint.setColor(mHeaderRowBackgroundColor);
-        mAllDayBackShaderPaint.setShadowLayer(4, 4, 4, mHourSeparatorColor);
+        mAllDayBackShaderPaint.setShadowLayer(4, 4, 4, mAllDaySeparatorColor);
 
         // Prepare day background color paint.
         mDayBackgroundPaint = new Paint();
@@ -754,6 +771,13 @@ public class WeekView extends View {
         mHourSeparatorPaint.setStyle(Paint.Style.STROKE);
         mHourSeparatorPaint.setStrokeWidth(mHourSeparatorHeight);
         mHourSeparatorPaint.setColor(mHourSeparatorColor);
+
+
+        mTimeLineSeparatorPaint = new Paint();
+        mTimeLineSeparatorPaint.setStyle(Paint.Style.STROKE);
+        mTimeLineSeparatorPaint.setStrokeWidth(mHourSeparatorHeight);
+        mTimeLineSeparatorPaint.setColor(mTimeLineSeparatorColor);
+
 
         // Prepare the "now" line color paint
         mNowLinePaint = new Paint();
@@ -806,6 +830,11 @@ public class WeekView extends View {
         mEventBoarderPaint.setStyle(Paint.Style.STROKE);
         mEventBoarderPaint.setStrokeWidth(1f);
         path = new Path();
+
+
+//  time left bg
+        timeColumnBgPaint = new Paint();
+        timeColumnBgPaint.setColor(mTimeColumnBgColor);
 
         // Set default event color.
         mDefaultEventColor = Color.parseColor("#9fc6e7");
@@ -950,24 +979,40 @@ public class WeekView extends View {
     private void drawTimeColumnAndAxes(Canvas canvas) {
         // Draw the background color for the header column.
         drawAllDayLabel(canvas);
-        canvas.drawRect(0, getHourTop(), mHeaderColumnWidth, getHeight(), mHeaderColumnBackgroundPaint);
+
+
         // Clip to paint in left column only.
-        canvas.clipRect(0, getHourTop(), mHeaderColumnWidth, getHeight(), Region.Op.REPLACE);
-        canvas.drawLine(mHeaderColumnWidth, getHourTop(), mHeaderColumnWidth, getHeight(), mHourSeparatorPaint);
+        canvas.clipRect(0, getHourTop(), mHeaderColumnWidth + rectMargin, getHeight(), Region.Op.REPLACE);
+        mHeaderColumnBackgroundPaint.setAlpha(0);
+        canvas.drawRect(0, getHourTop(), mHeaderColumnWidth + rectMargin, getHeight(), mHeaderColumnBackgroundPaint);
+        mHeaderColumnBackgroundPaint.setAlpha(255);
+
+
+
+//        bg
+        if (containsAllDayEvent) {
+            canvas.drawRect(0, getHourTop() + 8, mHeaderColumnWidth, getHeight(), timeColumnBgPaint);
+        } else {
+            canvas.drawRect(0, 0, mHeaderColumnWidth, getHeight(), timeColumnBgPaint);
+        }
+
+
+
+        canvas.drawLine(mHeaderColumnWidth, getHourTop(), mHeaderColumnWidth, getHeight(), mTimeLineSeparatorPaint);
 
         for (int i = 0; i < 24; i++) {
             float top = getHourTop() + getCurrectOriginY() + mHourHeight * i + mHeaderMarginBottom;
-
             // Draw the text if its y position is not outside of the visible area. The pivot point of the text is the point at the bottom-right corner.
             String time = getDateTimeInterpreter().interpretTime(i);
 //            String time = i + getResources().getString(hour);
             if (time == null)
                 throw new IllegalStateException("A DateTimeInterpreter must not return null time");
             if (top < getHeight())
-                canvas.drawText(time, mTimeTextWidth * 0.9f, top + mTimeTextHeight, mTimeTextPaint);
+                if (i != 0) {
+                    canvas.drawText(time, mTimeTextWidth * 0.9f, top + mTimeTextHeight, mTimeTextPaint);
+                }
+
         }
-
-
     }
 
     private float getHourColumnTop() {
@@ -981,16 +1026,15 @@ public class WeekView extends View {
 //        if (!containsAllDayEvent) {
 //            return;
 //        }
-        canvas.clipRect(0, 0, mHeaderColumnWidth, getHourTop(), Region.Op.REPLACE);
-        canvas.drawRect(0, 0, mHeaderColumnWidth, getHourTop(), mHeaderBackgroundPaint);
-        String allDay = getResources().getString(R.string.all_day);
-//        float textHeight = mTimeTextPaint.measureText(allDay);
+//        canvas.clipRect(0, getHeaderTop(), mHeaderColumnWidth, getHeight(), Region.Op.REPLACE);
+        canvas.drawRect(0, getHeaderTop(), mHeaderColumnWidth, getHeight(), mHeaderBackgroundPaint);
+
         if (containsAllDayEvent) {
             canvas.drawText(getResources().getString(R.string.all_day), mHeaderColumnWidth * 0.9f, getHeaderTop() + mHeaderHeight / 2 + mEventPadding, mTimeTextPaint);
         }
 
         canvas.save();
-        canvas.drawLine(mHeaderColumnWidth, 0, mHeaderColumnWidth, getHourTop(), mHourSeparatorPaint);
+        canvas.drawLine(mHeaderColumnWidth, getHeaderTop(), mHeaderColumnWidth, getHourTop(), mTimeLineSeparatorPaint);
         canvas.drawLine(0, getHeaderTop(), mHeaderColumnWidth, getHeaderTop(), mHourSeparatorPaint);
         canvas.restore();
     }
@@ -1152,7 +1196,7 @@ public class WeekView extends View {
 //        drawTopHeaderLine(canvas);
         // Draw the header row texts.
         startPixel = startFromPixel;
-
+        canvas.drawRect(0, 0, getWidth(), getHeaderTop(), mHeaderLabelBackgroundPaint);
         for (int dayNumber = leftDaysWithGaps + 1; dayNumber <= leftDaysWithGaps + mNumberOfVisibleDays + 1; dayNumber++) {
             // Check if the day is today.
             day = (Calendar) today.clone();
@@ -1179,11 +1223,11 @@ public class WeekView extends View {
             float daywidth = labelPaint.measureText(dayLabel);
             float weekwidth = weekPaint.measureText(dayWeek);
             float startX = startPixel + (mDayColumnWidth - daywidth - weekwidth) / 2;
-            canvas.drawRect(startPixel, 0, startPixel + mDayColumnWidth, getHeaderTop(), mHeaderBackgroundPaint);
+            canvas.drawRect(startPixel, 0, startPixel + mDayColumnWidth, getHeaderTop(), mHeaderLabelBackgroundPaint);
             canvas.drawText(dayLabel, startX, mHeaderTextHeight + mHeaderRowPadding, labelPaint);
             canvas.drawText(dayWeek, startX + weekwidth, mHeaderTextHeight + mHeaderRowPadding, weekPaint);
             canvas.save();
-            canvas.drawLine(startPixel, 0, startPixel, getHeaderTop(), mHourSeparatorPaint);
+//            canvas.drawLine(startPixel, 0, startPixel, getHeaderTop(), mHourSeparatorPaint);
             canvas.restore();
         }
     }
@@ -1572,7 +1616,7 @@ public class WeekView extends View {
         path.lineTo(rectF.right, rectF.bottom);
         path.lineTo(rectF.left, rectF.bottom);
         path.close();
-        mEventBoarderPaint.setColor(event.getmTitleColor());
+        mEventBoarderPaint.setColor(event.getmBoarderColor());
         canvas.drawPath(path, mEventBoarderPaint);
     }
 
@@ -1692,7 +1736,7 @@ public class WeekView extends View {
 
         if (event.isFinish()) {
             mEventTextPaint.setStrikeThruText(true);
-            mEventTextPaint.setColor(mEventFinishTextColor);
+            mEventTextPaint.setColor(event.getmFinishColor());
         }
 
         bob = EventTextUtils.getEventLineTitle(event);
@@ -1704,6 +1748,17 @@ public class WeekView extends View {
         mEventTextPaint.setStrikeThruText(false);
         mEventTextPaint.setColor(mEventTextColor);
 //        }
+    }
+
+
+    public static String addAlpha(String originalColor, double alpha) {
+        long alphaFixed = Math.round(alpha * 255);
+        String alphaHex = Long.toHexString(alphaFixed);
+        if (alphaHex.length() == 1) {
+            alphaHex = "0" + alphaHex;
+        }
+        originalColor = originalColor.replace("#", "#" + alphaHex);
+        return originalColor;
     }
 
 
