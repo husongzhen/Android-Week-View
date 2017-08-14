@@ -31,6 +31,7 @@ public class BasicActivity extends BaseActivity implements WeekView.EventEditLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mWeekView.setLinearWidth(2000);
         mWeekView.setEditListener(this);
         mWeekView.setEmptyViewClickListener(this);
         mWeekView.setOutCreateClickListener(this);

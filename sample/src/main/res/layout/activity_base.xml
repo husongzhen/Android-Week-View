@@ -20,8 +20,11 @@
         app:headerColumnTextColor="@color/toolbar_text"
         app:headerRowBackgroundColor="#ffffffff"
         app:mHeaderLabelBackColor="#C3D9EE"
+        app:mHeaderLabelStartColor="#69ACEF"
+        app:mHeaderLabelEndColor="#3E86D6"
         app:hourSeparatorHeight="1px"
         app:mTimeColumnBgColor="#EBF5FF"
+        app:mHeaderLabelColor="#FFFFFF"
         app:headerRowPadding="12dp"
         app:mAllDaySeparatorColor="#C3D9EE"
         app:mTimeLineSeparatorColor="#C3D9EE"
@@ -33,7 +36,7 @@
         app:rectMargin="1dp"
         app:textSize="12sp"
         app:todayBackgroundColor="#1848adff"
-        app:todayHeaderTextColor="@color/accent"
+        app:todayHeaderTextColor="#FFFFFF"
         app:weekTextSize="16sp" />
 
 
