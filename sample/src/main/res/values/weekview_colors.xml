@@ -11,6 +11,7 @@
 
 
     <color name="ie_color">#FDB2A5</color>
+    <color name="ie_title_color">#FF7A7A</color>
     <color name="iu_color">#F0E48D</color>
     <color name="ue_color">#C7E9FF</color>
     <color name="uu_color">#9AE7A0</color>

@@ -40,6 +40,7 @@
         <attr name="allDayEventItemPadding" format="dimension"/>
         <attr name="editCicleDistance" format="integer"/>
         <attr name="touchEditCicleR" format="dimension"/>
+        <attr name="rectMargin" format="dimension"/>
         <attr name="eventLeftColorWidth" format="dimension"/>
         <attr name="headerColumnBackground" format="color"/>
         <attr name="dayNameLength" format="enum">

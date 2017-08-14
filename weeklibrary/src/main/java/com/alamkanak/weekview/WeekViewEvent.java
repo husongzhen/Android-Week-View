@@ -21,7 +21,17 @@ public class WeekViewEvent {
     private Calendar mEndTime;
     private String mName;
     private String mLocation;
+
+    public int getmTitleColor() {
+        return mTitleColor;
+    }
+
+    public void setmTitleColor(int mTitleColor) {
+        this.mTitleColor = mTitleColor;
+    }
+
     private int mColor;
+    private int mTitleColor;
     private int mEditColor;
     private boolean mAllDay;
     private boolean isEditAble = false;
